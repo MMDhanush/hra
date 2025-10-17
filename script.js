@@ -17,34 +17,34 @@ const sections = [
         id: "modal2",
         title: "Section 2: Lifestyle & Habits (25% Weight)",
         fields: [
-            { id: "exerciseFrequency", label: "How often do you exercise for at least 30 minutes?", type: "select", options: ["Never (0)", "1–2 days (1)", "3–4 days (2)", "5+ days (3)"] }, // [cite: 90, 91]
-            { id: "fruitsVeg", label: "How often do you eat fruits and vegetables daily?", type: "select", options: ["Rarely (0)", "1 serving/day (1)", "2 servings/day (2)", "3+ servings/day (3)"] }, // [cite: 92, 93]
-            { id: "processedFood", label: "How often do you consume fried or processed food?", type: "select", options: ["Daily (0)", "3–4 times/week (1)", "Occasionally (2)", "Rarely (3)"] }, // [cite: 94, 95]
-            { id: "smoking", label: "Do you smoke or use tobacco?", type: "select", options: ["Yes (0)", "Occasionally (1)", "No (3)"] }, // 
-            { id: "alcohol", label: "Do you consume alcohol?", type: "select", options: ["Regularly (0)", "Occasionally (1)", "Never (3)"] }, // [cite: 98, 99]
-            { id: "water", label: "How many glasses of water do you drink per day?", type: "select", options: ["<4 (0)", "4–6 (1)", "7–8 (2)", "8+ (3)"] } // [cite: 100, 101]
+            { id: "exerciseFrequency", label: "How often do you exercise for at least 30 minutes?", type: "select", options: ["Never", "1–2 days", "3–4 days", "5+ days "] }, // [cite: 90, 91]
+            { id: "fruitsVeg", label: "How often do you eat fruits and vegetables daily?", type: "select", options: ["Rarely", "1 serving/day", "2 servings/day", "3+ servings/day"] }, // [cite: 92, 93]
+            { id: "processedFood", label: "How often do you consume fried or processed food?", type: "select", options: ["Daily", "3–4 times/week", "Occasionally", "Rarely"] }, // [cite: 94, 95]
+            { id: "smoking", label: "Do you smoke or use tobacco?", type: "select", options: ["Yes", "Occasionally", "No"] }, // 
+            { id: "alcohol", label: "Do you consume alcohol?", type: "select", options: ["Regularly", "Occasionally", "Never"] }, // [cite: 98, 99]
+            { id: "water", label: "How many glasses of water do you drink per day?", type: "select", options: ["<4", "4–6", "7–8", "8+"] } // [cite: 100, 101]
         ]
     },
     {
         id: "modal3",
         title: "Section 3: Physical Health & Chronic Risk (30% Weight)",
         fields: [
-            { id: "bpSugar", label: "High blood pressure or sugar levels diagnosis?", type: "select", options: ["Yes (0)", "No (3)"] }, // [cite: 103]
-            { id: "tired", label: "Do you often feel tired even after normal rest?", type: "select", options: ["Yes (0)", "No (3)"] }, // [cite: 104]
-            { id: "waistCircumference", label: "Is your waist circumference above healthy limit (90cm/80cm)?", type: "select", options: ["Yes (0)", "No (3)"] }, // [cite: 105]
-            { id: "discomfort", label: "Do you experience frequent headaches, dizziness, or breathlessness?", type: "select", options: ["Yes (0)", "Sometimes (1)", "No (3)"] }, // [cite: 106]
-            { id: "doctorVisits", label: "How often do you visit a doctor for general checkups?", type: "select", options: ["Rarely (0)", "Once a year (2)", "Twice or more per year (3)"] } // [cite: 107, 108]
+            { id: "bpSugar", label: "High blood pressure or sugar levels diagnosis?", type: "select", options: ["Yes", "No"] }, // [cite: 103]
+            { id: "tired", label: "Do you often feel tired even after normal rest?", type: "select", options: ["Yes", "No"] }, // [cite: 104]
+            { id: "waistCircumference", label: "Is your waist circumference above healthy limit (90cm/80cm)?", type: "select", options: ["Yes", "No"] }, // [cite: 105]
+            { id: "discomfort", label: "Do you experience frequent headaches, dizziness, or breathlessness?", type: "select", options: ["Yes", "Sometimes", "No"] }, // [cite: 106]
+            { id: "doctorVisits", label: "How often do you visit a doctor for general checkups?", type: "select", options: ["Rarely", "Once a year", "Twice or more per year"] } // [cite: 107, 108]
         ]
     },
     {
         id: "modal4",
         title: "Section 4: Mental & Emotional Wellbeing (25% Weight)",
         fields: [
-            { id: "stressAnxious", label: "How often do you feel stressed or anxious?", type: "select", options: ["Often (0)", "Sometimes (1)", "Rarely (2)", "Never (3)"] }, // [cite: 110, 111]
-            { id: "workLifeBalance", label: "Can you manage work-life balance effectively?", type: "select", options: ["Never (0)", "Sometimes (1)", "Mostly (2)", "Always (3)"] }, // [cite: 112, 113]
-            { id: "concentrateMotivated", label: "Do you find it difficult to concentrate or stay motivated?", type: "select", options: ["Often (0)", "Sometimes (1)", "Rarely (2)", "Never (3)"] }, // [cite: 114, 115]
-            { id: "sadnessBurnout", label: "Experienced persistent sadness, loss of interest, or burnout recently?", type: "select", options: ["Yes (0)", "Occasionally (1)", "No (3)"] }, // [cite: 116, 117]
-            { id: "relaxationBreaks", label: "How often do you take breaks or time for relaxation activities?", type: "select", options: ["Rarely (0)", "Weekly (1)", "Several times/week (2)", "Daily (3)"] } // [cite: 118, 119]
+            { id: "stressAnxious", label: "How often do you feel stressed or anxious?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, // [cite: 110, 111]
+            { id: "workLifeBalance", label: "Can you manage work-life balance effectively?", type: "select", options: ["Never (0)", "Sometimes", "Mostly", "Always"] }, // [cite: 112, 113]
+            { id: "concentrateMotivated", label: "Do you find it difficult to concentrate or stay motivated?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, // [cite: 114, 115]
+            { id: "sadnessBurnout", label: "Experienced persistent sadness, loss of interest, or burnout recently?", type: "select", options: ["Yes", "Occasionally", "No"] }, // [cite: 116, 117]
+            { id: "relaxationBreaks", label: "How often do you take breaks or time for relaxation activities?", type: "select", options: ["Rarely", "Weekly", "Several times/week", "Daily"] } // [cite: 118, 119]
         ]
     },
     {
@@ -52,14 +52,14 @@ const sections = [
         title: "Section 5 & 6: Sleep & Preventive Health (20% Weight)",
         fields: [
             // Section F: Sleep & Fatigue (10%) [cite: 120]
-            { id: "sleepHours", label: "How many hours do you sleep daily?", type: "select", options: ["<5 hrs (0)", "5–6 hrs (1)", "7–8 hrs (3)", ">8 hrs (2)"] }, // [cite: 121, 122]
-            { id: "refreshed", label: "How often do you wake up feeling refreshed?", type: "select", options: ["Rarely (0)", "Sometimes (1)", "Most days (2)", "Always (3)"] }, // [cite: 123, 124]
-            { id: "screenTimeBed", label: "Do you use screens within 30 minutes before sleep?", type: "select", options: ["Always (0)", "Sometimes (1)", "Rarely (2)", "Never (3)"] }, // [cite: 125, 126]
+            { id: "sleepHours", label: "How many hours do you sleep daily?", type: "select", options: ["<5 hrs", "5–6 hrs", "7–8 hrs", ">8 hrs"] }, // [cite: 121, 122]
+            { id: "refreshed", label: "How often do you wake up feeling refreshed?", type: "select", options: ["Rarely", "Sometimes", "Most days", "Always"] }, // [cite: 123, 124]
+            { id: "screenTimeBed", label: "Do you use screens within 30 minutes before sleep?", type: "select", options: ["Always", "Sometimes", "Rarely", "Never"] }, // [cite: 125, 126]
 
             // Section E: Preventive Health Awareness (10%) [cite: 127]
-            { id: "checkup12Months", label: "Have you done a health checkup in the last 12 months?", type: "select", options: ["No (0)", "Yes (3)"] }, // [cite: 128]
-            { id: "awareVitals", label: "Are you aware of your BMI, BP, or sugar levels?", type: "select", options: ["No (0)", "Yes (3)"] }, // [cite: 129]
-            { id: "interestTips", label: "Would you like to receive preventive care tips or consultations?", type: "select", options: ["No (0)", "Yes (3)"] } // [cite: 130]
+            { id: "checkup12Months", label: "Have you done a health checkup in the last 12 months?", type: "select", options: ["No", "Yes"] }, // [cite: 128]
+            { id: "awareVitals", label: "Are you aware of your BMI, BP, or sugar levels?", type: "select", options: ["No", "Yes"] }, // [cite: 129]
+            { id: "interestTips", label: "Would you like to receive preventive care tips or consultations?", type: "select", options: ["No", "Yes"] } // [cite: 130]
         ],
         final: true
     }
