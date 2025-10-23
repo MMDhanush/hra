@@ -1,5 +1,5 @@
 // --- 1. NEW QUESTION SET (SECTIONS A-F) - CLEANED OPTIONS ---
-// The scores (0, 1, 2, 3) have been removed from the visible option text in the HTML/options array.
+// Removed incomplete citation tags that caused "cite_start is not defined" error.
 const sections = [
     {
         id: "modal1",
@@ -41,7 +41,6 @@ const sections = [
         title: "Section 4: Mental & Emotional Wellbeing (25% Weight)",
         fields: [
             { id: "stressAnxious", label: "How often do you feel stressed or anxious?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, 
-            // Note: I've removed the score from the option text here too
             { id: "workLifeBalance", label: "Can you manage work-life balance effectively?", type: "select", options: ["Never", "Sometimes", "Mostly", "Always"] }, 
             { id: "concentrateMotivated", label: "Do you find it difficult to concentrate or stay motivated?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, 
             { id: "sadnessBurnout", label: "Experienced persistent sadness, loss of interest, or burnout recently?", type: "select", options: ["Yes", "Occasionally", "No"] }, 
@@ -93,50 +92,52 @@ sections.forEach((section, index) => {
     modalContainer.innerHTML += modalHTML;
 });
 
-// --- REWRITTEN extractScore FUNCTION (FIXES 0 SCORE BUG) ---
-// It now maps the selected text value back to the required point value using a look-up table.
+
+// --- REWRITTEN extractScore FUNCTION (FIXES SCORE CALCULATION) ---
+// It now maps the selected text value back to the required point value using a look-up table 
+// based on the HRA.docx logic (e.g., Yes=0, No=3 or sequential scores).
 function extractScore(fieldId, value) {
     if (!value) return 0;
 
     // Scores based on HRA.docx
     const scoreMap = {
         // --- Section B: Lifestyle & Habits ---
-        "smoking": { "Yes": 0, "Occasionally": 1, "No": 3 }, //
-        "alcohol": { "Regularly": 0, "Occasionally": 1, "Never": 3 }, //
+        "smoking": { "Yes": 0, "Occasionally": 1, "No": 3 }, // [cite: 25, 26]
+        "alcohol": { "Regularly": 0, "Occasionally": 1, "Never": 3 }, // [cite: 27, 28]
 
         // --- Section C: Physical Health & Chronic Risk ---
-        "bpSugar": { "Yes": 0, "No": 3 }, //
-        "tired": { "Yes": 0, "No": 3 }, //
-        "waistCircumference": { "Yes": 0, "No": 3 }, //
-        "discomfort": { "Yes": 0, "Sometimes": 1, "No": 3 }, //
-        "doctorVisits": { "Rarely": 0, "Once a year": 2, "Twice or more per year": 3 }, //
+        "bpSugar": { "Yes": 0, "No": 3 }, // [cite: 32]
+        "tired": { "Yes": 0, "No": 3 }, // [cite: 33]
+        "waistCircumference": { "Yes": 0, "No": 3 }, // [cite: 34]
+        "discomfort": { "Yes": 0, "Sometimes": 1, "No": 3 }, // [cite: 35]
+        "doctorVisits": { "Rarely": 0, "Once a year": 2, "Twice or more per year": 3 }, // [cite: 37]
 
         // --- Section D: Mental & Emotional Wellbeing ---
-        "sadnessBurnout": { "Yes": 0, "Occasionally": 1, "No": 3 }, //
+        "sadnessBurnout": { "Yes": 0, "Occasionally": 1, "No": 3 }, // [cite: 45, 46]
 
         // --- Section F: Sleep & Fatigue ---
-        "sleepHours": { "<5 hrs": 0, "5–6 hrs": 1, "7–8 hrs": 3, ">8 hrs": 2 }, //
+        "sleepHours": { "<5 hrs": 0, "5–6 hrs": 1, "7–8 hrs": 3, ">8 hrs": 2 }, // [cite: 51]
 
         // --- Section E: Preventive Health Awareness ---
-        "checkup12Months": { "No": 0, "Yes": 3 }, //
-        "awareVitals": { "No": 0, "Yes": 3 }, //
-        "interestTips": { "No": 0, "Yes": 3 }, //
+        "checkup12Months": { "No": 0, "Yes": 3 }, // [cite: 57]
+        "awareVitals": { "No": 0, "Yes": 3 }, // [cite: 58]
+        "interestTips": { "No": 0, "Yes": 3 }, // [cite: 59]
     };
 
     // Fields that follow the sequential score pattern (0, 1, 2, 3) based on option index in sections array.
     const sequentialFields = [
-        "exerciseFrequency", // Never(0) / 1-2 days(1) / 3-4 days(2) / 5+ days(3)
-        "fruitsVeg", // Rarely(0) / 1 serving/day(1) / 2 servings/day(2) / 3+ servings/day(3)
-        "processedFood", // Daily(0) / 3-4 times/week(1) / Occasionally(2) / Rarely(3)
-        "water", // <4(0) / 4-6(1) / 7-8(2) / 8+(3)
+        "exerciseFrequency", // Never(0) / 1-2 days(1) / 3-4 days(2) / 5+ days(3) [cite: 20]
+        "fruitsVeg", // Rarely(0) / 1 serving/day(1) / 2 servings/day(2) / 3+ servings/day(3) [cite: 22]
+        "processedFood", // Daily(0) / 3-4 times/week(1) / Occasionally(2) / Rarely(3) [cite: 24]
+        "water", // <4(0) / 4-6(1) / 7-8(2) / 8+(3) [cite: 30]
 
-        "stressAnxious", // Often(0) / Sometimes(1) / Rarely(2) / Never(3)
-        "workLifeBalance", // Never(0) / Sometimes(1) / Mostly(2) / Always(3)
-        "concentrateMotivated", // Often(0) / Sometimes(1) / Rarely(2) / Never(3)
-        "relaxationBreaks", // Rarely(0) / Weekly(1) / Several times/week(2) / Daily(3)
+        "stressAnxious", // Often(0) / Sometimes(1) / Rarely(2) / Never(3) [cite: 40]
+        "workLifeBalance", // Never(0) / Sometimes(1) / Mostly(2) / Always(3) [cite: 42]
+        "concentrateMotivated", // Often(0) / Sometimes(1) / Rarely(2) / Never(3) [cite: 44]
+        "relaxationBreaks", // Rarely(0) / Weekly(1) / Several times/week(2) / Daily(3) [cite: 48]
 
-        "refreshed", // Rarely(0) / Sometimes(1) / Most days(2) / Always(3)
-        "screenTimeBed" // Always(0) / Sometimes(1) / Rarely(2) / Never(3)
+        "refreshed", // Rarely(0) / Sometimes(1) / Most days(2) / Always(3) [cite: 53]
+        "screenTimeBed" // Always(0) / Sometimes(1) / Rarely(2) / Never(3) [cite: 55]
     ];
 
     if (scoreMap[fieldId]) {
@@ -144,18 +145,17 @@ function extractScore(fieldId, value) {
         return scoreMap[fieldId][value] || 0;
     } else if (sequentialFields.includes(fieldId)) {
         // Use index for sequential fields (0, 1, 2, 3)
-        // Find the correct field to get the options array
         const field = sections.flatMap(s => s.fields).find(f => f.id === fieldId);
         
         if (field) {
             // Find the index of the selected value. This index is the score (0, 1, 2, 3).
             const index = field.options.findIndex(option => option === value);
-            // We return the index directly as the score, as the options are ordered 0-1-2-3.
             return index >= 0 ? index : 0; 
         }
     }
     return 0; // Default to 0 if field not found or value is invalid
 }
+
 
 // Generate form fields dynamically (No change needed)
 function generateField(field) {
@@ -178,6 +178,7 @@ function generateField(field) {
 
 // Open, Next, Prev modal functions (No change needed)
 function openModal(id) {
+    // This function is now correctly loaded and defined before being called by the HTML
     let modal = new bootstrap.Modal(document.getElementById(id));
     document.querySelectorAll(".modal").forEach(m => {
         if (m.id !== id) {
@@ -251,7 +252,6 @@ function saveData(modalId) {
     inputs.forEach(input => {
         formData[input.id] = input.value.trim();
     });
-    // Removed specific smokingDetail logic as it's not in the new HRA.docx
 }
 
 // --- 2. NEW WEIGHTED SCORING LOGIC (100 POINTS TOTAL) ---
@@ -297,7 +297,7 @@ function calculateHealthScore() {
                       extractScore("refreshed", formData.refreshed) +
                       extractScore("screenTimeBed", formData.screenTimeBed);
 
-    // 2.3. Scale Raw Scores to 100-Point Total based on Weights
+    // 2.3. Scale Raw Scores to 100-Point Total based on Weights 
     let score = (rawScoreB / MAX_RAW_B * 25) +
                 (rawScoreC / MAX_RAW_C * 30) +
                 (rawScoreD / MAX_RAW_D * 25) +
@@ -310,13 +310,13 @@ function calculateHealthScore() {
     // 2.4. Determine Risk Status based on ranges
     let riskStatus;
     if (score >= 81) {
-        riskStatus = "Excellent Health"; // 81–100
+        riskStatus = "Excellent Health"; // 81–100 [cite: 61]
     } else if (score >= 61) {
-        riskStatus = "Good / Moderate Health"; // 61–80
+        riskStatus = "Good / Moderate Health"; // 61–80 [cite: 61]
     } else if (score >= 41) {
-        riskStatus = "At Risk"; // 41–60
+        riskStatus = "At Risk"; // 41–60 [cite: 61]
     } else {
-        riskStatus = "High Risk"; // 0–40
+        riskStatus = "High Risk"; // 0–40 [cite: 61]
     }
 
     return { score, riskStatus };
@@ -333,18 +333,17 @@ function getRiskColor(riskLevel) {
 }
 
 function getRiskColor1(riskLevel) {
-    // Keeping this function dark/black as it's used for the main score table (Good/Moderate text color)
     return [0, 0, 0];
 }
 
 function getHealthAreas() {
     // New health areas based on HRA.docx sections B, C, D, E, F
     const areas = {
-        "Lifestyle & Habits": "Lifestyle & Habits",
-        "Physical Health & Chronic Risk": "Physical Health & Chronic Risk",
-        "Mental & Emotional Wellbeing": "Mental & Emotional Wellbeing",
-        "Preventive Health & Awareness": "Preventive Health & Awareness",
-        "Sleep & Fatigue": "Sleep & Fatigue"
+        "Lifestyle & Habits": "Lifestyle & Habits", // 25% [cite: 8]
+        "Physical Health & Chronic Risk": "Physical Health & Chronic Risk", // 30% [cite: 8]
+        "Mental & Emotional Wellbeing": "Mental & Emotional Wellbeing", // 25% [cite: 8]
+        "Preventive Health & Awareness": "Preventive Health & Awareness", // 10% [cite: 8]
+        "Sleep & Fatigue": "Sleep & Fatigue" // 10% [cite: 8]
     };
 
     function determineRisk(parameter) {
@@ -413,26 +412,26 @@ function calculateParameterScore(parameter) {
 function getOverallHealthSuggestion(score, riskStatus) {
     if (riskStatus === "Excellent Health") {
         return [
-            "You’re doing great! Continue your healthy habits.",
-            "Maintain regular checkups to stay on track.",
+            "You’re doing great! Continue your healthy habits.", // [cite: 61]
+            "Maintain regular checkups to stay on track.", // [cite: 61]
             "Your health is your greatest asset—keep prioritizing it."
         ];
     } else if (riskStatus === "Good / Moderate Health") {
         return [
-            "You’re doing well but have some improvement areas.",
-            "Focus on consistent physical activity and stress control.",
+            "You’re doing well but have some improvement areas.", // [cite: 61]
+            "Focus on consistent physical activity and stress control.", // [cite: 61]
             "Small, consistent changes can move you into the 'Excellent' category."
         ];
     } else if (riskStatus === "At Risk") {
         return [
-            "Your responses indicate potential lifestyle or stress concerns.",
-            "Recommended to take preventive screening and wellness sessions.",
+            "Your responses indicate potential lifestyle or stress concerns.", // [cite: 61]
+            "Recommended to take preventive screening and wellness sessions.", // [cite: 61]
             "Addressing these concerns now is crucial to prevent further health deterioration."
         ];
     } else { // High Risk
         return [
-            "You’re showing signs of multiple health risks.",
-            "A detailed health check-up and personalized wellness plan are strongly recommended.",
+            "You’re showing signs of multiple health risks.", // [cite: 61]
+            "A detailed health check-up and personalized wellness plan are strongly recommended.", // [cite: 61]
             "Seek medical advice immediately to manage and mitigate these risks."
         ];
     }
@@ -500,3 +499,203 @@ function getDetailedSuggestions(parameter, riskLevel) {
             "At Risk": ["• Schedule a full preventive health checkup within 3 months.", "• Understand the meaning of your key vital signs (BP, Sugar).", "• Opt-in for NIZCARE's wellness tips and consultations."],
             "High Risk": ["• Do not delay; book a comprehensive health screening immediately.", "• Meet with a doctor to discuss personalized preventive steps.", "• Educate yourself on the risks associated with being unaware of your vitals."]
         },
+        "Sleep & Fatigue": {
+            "Good / Moderate Health": ["• Turn off all screens 30 minutes before bed.", "• Ensure your bedroom is dark, quiet, and cool.", "• Establish a consistent sleep and wake time."],
+            "At Risk": ["• Avoid caffeine and heavy meals 3 hours before sleep.", "• Use a relaxation technique (e.g., progressive muscle relaxation) to aid sleep.", "• If refreshed quality is low, consult a doctor to rule out sleep disorders."],
+            "High Risk": ["• Seek consultation for chronic insomnia or persistent fatigue.", "• Eliminate screens in the bedroom entirely.", "• Address underlying stress or anxiety that is disrupting sleep."]
+        }
+    };
+    
+    // Fallback to Moderate suggestions if the specific risk level text is missing
+    const levelKey = riskLevel === "Excellent Health" ? "Good / Moderate Health" : riskLevel;
+
+    return suggestions[parameter][levelKey] || ["No specific suggestions available."];
+}
+
+
+// Remaining functions (generateSummaryTable, generateHealthRiskTable, generateRiskDetails, generatePDF) 
+
+function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Overall Health Summary", 105, 50, { align: "center" });
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+
+    let summaryData = [
+        ["Overall Health Score", `${score}/100`],
+        ["Risk Status", riskStatus],
+    ];
+
+    doc.autoTable({
+        startY: 60,
+        head: [["Metric", "Value"]],
+        body: summaryData,
+        theme: "grid",
+        styles: { fontSize: 10, halign: "center" },
+    });
+
+    let y = doc.autoTable.previous.finalY + 10;
+
+    doc.setFont("helvetica", "bold");
+    doc.text("Overall Health Suggestions:", 14, y);
+    y += 6;
+
+    doc.setFont("helvetica", "normal");
+    overallHealthSuggestion.forEach((suggestion) => {
+        doc.text(`• ${suggestion}`, 14, y);
+        y += 6;
+    });
+
+    return y + 10;
+}
+
+function generateHealthRiskTable(doc, y, healthAreas) {
+    doc.setFont("helvetica", "bold");
+    doc.text("Health Area Risk Levels", 105, y, { align: "center" });
+
+    y += 8;
+
+    let healthData = Object.entries(healthAreas).map(([key, value]) => [
+        key,
+        {
+            content: value,
+            styles: { textColor: getRiskColor(value) }
+        }
+    ]);
+
+    doc.autoTable({
+        startY: y,
+        head: [["Health Area", "Risk Level"]],
+        body: healthData,
+        theme: "grid",
+        styles: { fontSize: 10, halign: "center" },
+    });
+
+    return doc.autoTable.previous.finalY + 10;
+}
+
+function generateRiskDetails(doc, y, healthAreas) {
+    Object.keys(healthAreas).forEach((key) => {
+        if (y > doc.internal.pageSize.height - 60) {
+            doc.addPage();
+            y = 20;
+        }
+
+        let riskLevel = healthAreas[key];
+        let riskScore = calculateParameterScore(key);
+        let subtitleText = getRiskSubtitle(key, riskLevel);
+        let riskColor = getRiskColor(riskLevel);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.text(key, 14, y);
+        y += 6;
+
+        if (y > doc.internal.pageSize.height - 50) {
+            doc.addPage();
+            y = 20;
+        }
+        doc.autoTable({
+            startY: y,
+            head: [["Metric", "Value"]],
+            body: [
+                ["Risk Score", `${riskScore}/10`],
+                ["Risk Level", { content: riskLevel, styles: { textColor: riskColor } }]
+            ],
+            theme: "grid",
+            styles: { fontSize: 10, halign: "center" },
+        });
+
+        y = doc.autoTable.previous.finalY + 10;
+
+        if (y > doc.internal.pageSize.height - 50) {
+            doc.addPage();
+            y = 20;
+        }
+        doc.setFont("helvetica", "bold");
+        doc.text(subtitleText[0], 14, y);
+        y += 6;
+        doc.setFont("helvetica", "normal");
+
+        let lines = doc.splitTextToSize(subtitleText.slice(1).join("\n"), 180);
+        doc.text(lines, 14, y);
+        y += lines.length * 6 + 10;
+
+        if (riskLevel !== "Excellent Health") {
+            if (y > doc.internal.pageSize.height - 50) {
+                doc.addPage();
+                y = 20;
+            }
+            let suggestions = getDetailedSuggestions(key, riskLevel);
+            doc.setFont("helvetica", "bold");
+            doc.text("How to Improve:", 14, y);
+            y += 6;
+            doc.setFont("helvetica", "normal");
+
+            let suggestionLines = doc.splitTextToSize(suggestions.join("\n"), 180);
+            doc.text(suggestionLines, 14, y);
+            y += suggestionLines.length * 6 + 10;
+        }
+
+        if (y < doc.internal.pageSize.height - 20) {
+            doc.setDrawColor(150, 150, 150);
+            doc.setLineWidth(0.5);
+            doc.line(10, y, 200, y);
+            y += 10;
+        }
+
+        if (y > doc.internal.pageSize.height - 50) {
+            doc.addPage();
+            y = 20;
+        }
+    });
+
+    return y;
+}
+
+function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    if (typeof doc.autoTable !== "function") {
+        alert("Error: jsPDF AutoTable plugin is not loaded.");
+        return;
+    }
+
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    const { score, riskStatus } = calculateHealthScore();
+    const overallHealthSuggestion = getOverallHealthSuggestion(score, riskStatus);
+    const healthAreas = getHealthAreas();
+
+    const logo = new Image();
+    logo.src = "logo.png";
+
+    logo.onload = function () {
+        doc.addImage(logo, "PNG", 10, 10, 65, 15);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.text(`Date: ${currentDate}`, 200, 15, { align: "right" });
+        doc.text(`Time: ${currentTime}`, 200, 22, { align: "right" });
+
+        doc.setFontSize(16);
+        doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" }); // Updated Title
+
+        let y = 45;
+        y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y);
+        y = generateHealthRiskTable(doc, y, healthAreas);
+
+        doc.addPage();
+        y = 20;
+        y = generateRiskDetails(doc, y, healthAreas);
+
+        doc.save("NIZCARE_Health_Scorecard.pdf");
+    };
+
+    if (logo.complete) {
+        logo.onload();
+    }
+}
