@@ -673,7 +673,8 @@ function generatePDF() {
     const logo = new Image();
     logo.src = "logo.png";
 
-    logo.onload = function () {
+    // Define the function that actually generates the PDF content
+    const generateContent = function() {
         doc.addImage(logo, "PNG", 10, 10, 65, 15);
 
         doc.setFont("helvetica", "bold");
@@ -682,7 +683,7 @@ function generatePDF() {
         doc.text(`Time: ${currentTime}`, 200, 22, { align: "right" });
 
         doc.setFontSize(16);
-        doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" }); // Updated Title
+        doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" });
 
         let y = 45;
         y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y);
@@ -695,7 +696,15 @@ function generatePDF() {
         doc.save("NIZCARE_Health_Scorecard.pdf");
     };
 
+    // Set the onload handler to generate the content
+    logo.onload = generateContent;
+
+    // *** FIX: Prevent immediate call if image is already cached/complete ***
+    // Only call generateContent directly if the image is already loaded,
+    // otherwise, the onload handler will take care of it.
     if (logo.complete) {
-        logo.onload();
+        // Remove the handler to prevent a potential double-call scenario
+        logo.onload = null; 
+        generateContent();
     }
 }
