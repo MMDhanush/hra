@@ -1,65 +1,65 @@
-// --- 1. NEW QUESTION SET (SECTIONS A-F) ---
-// Note: Values are set to the score points (0, 1, 2, 3) for direct calculation.
+// --- 1. NEW QUESTION SET (SECTIONS A-F) - CLEANED OPTIONS ---
+// The scores (0, 1, 2, 3) have been removed from the visible option text.
 const sections = [
     {
         id: "modal1",
         title: "Section 1: Basic Profile (Non-Scoring)",
         fields: [
-            { id: "ageGroup", label: "Age Group", type: "select", options: ["<25", "25–34", "35–44", "45–54", "55+"] }, // [cite: 82, 83]
-            { id: "gender", label: "Gender", type: "select", options: ["Male", "Female", "Other"] }, // [cite: 84]
-            { id: "occupationType", label: "Occupation Type", type: "select", options: ["Desk job", "Field job", "Shift work"] }, // [cite: 85]
-            { id: "workLocation", label: "Work Location (City, State)", type: "text" }, // [cite: 86]
-            { id: "maritalStatus", label: "Marital Status", type: "text" }, // [cite: 87]
-            { id: "existingConditions", label: "Any existing diagnosed conditions?", type: "text" } // [cite: 88]
+            { id: "ageGroup", label: "Age Group", type: "select", options: ["<25", "25–34", "35–44", "45–54", "55+"] }, 
+            { id: "gender", label: "Gender", type: "select", options: ["Male", "Female", "Other"] }, 
+            { id: "occupationType", label: "Occupation Type", type: "select", options: ["Desk job", "Field job", "Shift work"] }, 
+            { id: "workLocation", label: "Work Location (City, State)", type: "text" }, 
+            { id: "maritalStatus", label: "Marital Status", type: "text" }, 
+            { id: "existingConditions", label: "Any existing diagnosed conditions?", type: "text" } 
         ]
     },
     {
         id: "modal2",
         title: "Section 2: Lifestyle & Habits (25% Weight)",
         fields: [
-            { id: "exerciseFrequency", label: "How often do you exercise for at least 30 minutes?", type: "select", options: ["Never", "1–2 days", "3–4 days", "5+ days "] }, // [cite: 90, 91]
-            { id: "fruitsVeg", label: "How often do you eat fruits and vegetables daily?", type: "select", options: ["Rarely", "1 serving/day", "2 servings/day", "3+ servings/day"] }, // [cite: 92, 93]
-            { id: "processedFood", label: "How often do you consume fried or processed food?", type: "select", options: ["Daily", "3–4 times/week", "Occasionally", "Rarely"] }, // [cite: 94, 95]
-            { id: "smoking", label: "Do you smoke or use tobacco?", type: "select", options: ["Yes", "Occasionally", "No"] }, // 
-            { id: "alcohol", label: "Do you consume alcohol?", type: "select", options: ["Regularly", "Occasionally", "Never"] }, // [cite: 98, 99]
-            { id: "water", label: "How many glasses of water do you drink per day?", type: "select", options: ["<4", "4–6", "7–8", "8+"] } // [cite: 100, 101]
+            { id: "exerciseFrequency", label: "How often do you exercise for at least 30 minutes?", type: "select", options: ["Never", "1–2 days", "3–4 days", "5+ days "] }, 
+            { id: "fruitsVeg", label: "How often do you eat fruits and vegetables daily?", type: "select", options: ["Rarely", "1 serving/day", "2 servings/day", "3+ servings/day"] }, 
+            { id: "processedFood", label: "How often do you consume fried or processed food?", type: "select", options: ["Daily", "3–4 times/week", "Occasionally", "Rarely"] }, 
+            { id: "smoking", label: "Do you smoke or use tobacco?", type: "select", options: ["Yes", "Occasionally", "No"] }, 
+            { id: "alcohol", label: "Do you consume alcohol?", type: "select", options: ["Regularly", "Occasionally", "Never"] }, 
+            { id: "water", label: "How many glasses of water do you drink per day?", type: "select", options: ["<4", "4–6", "7–8", "8+"] } 
         ]
     },
     {
         id: "modal3",
         title: "Section 3: Physical Health & Chronic Risk (30% Weight)",
         fields: [
-            { id: "bpSugar", label: "High blood pressure or sugar levels diagnosis?", type: "select", options: ["Yes", "No"] }, // [cite: 103]
-            { id: "tired", label: "Do you often feel tired even after normal rest?", type: "select", options: ["Yes", "No"] }, // [cite: 104]
-            { id: "waistCircumference", label: "Is your waist circumference above healthy limit (90cm/80cm)?", type: "select", options: ["Yes", "No"] }, // [cite: 105]
-            { id: "discomfort", label: "Do you experience frequent headaches, dizziness, or breathlessness?", type: "select", options: ["Yes", "Sometimes", "No"] }, // [cite: 106]
-            { id: "doctorVisits", label: "How often do you visit a doctor for general checkups?", type: "select", options: ["Rarely", "Once a year", "Twice or more per year"] } // [cite: 107, 108]
+            { id: "bpSugar", label: "High blood pressure or sugar levels diagnosis?", type: "select", options: ["Yes", "No"] }, 
+            { id: "tired", label: "Do you often feel tired even after normal rest?", type: "select", options: ["Yes", "No"] }, 
+            { id: "waistCircumference", label: "Is your waist circumference above healthy limit (90cm/80cm)?", type: "select", options: ["Yes", "No"] }, 
+            { id: "discomfort", label: "Do you experience frequent headaches, dizziness, or breathlessness?", type: "select", options: ["Yes", "Sometimes", "No"] }, 
+            { id: "doctorVisits", label: "How often do you visit a doctor for general checkups?", type: "select", options: ["Rarely", "Once a year", "Twice or more per year"] } 
         ]
     },
     {
         id: "modal4",
         title: "Section 4: Mental & Emotional Wellbeing (25% Weight)",
         fields: [
-            { id: "stressAnxious", label: "How often do you feel stressed or anxious?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, // [cite: 110, 111]
-            { id: "workLifeBalance", label: "Can you manage work-life balance effectively?", type: "select", options: ["Never (0)", "Sometimes", "Mostly", "Always"] }, // [cite: 112, 113]
-            { id: "concentrateMotivated", label: "Do you find it difficult to concentrate or stay motivated?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, // [cite: 114, 115]
-            { id: "sadnessBurnout", label: "Experienced persistent sadness, loss of interest, or burnout recently?", type: "select", options: ["Yes", "Occasionally", "No"] }, // [cite: 116, 117]
-            { id: "relaxationBreaks", label: "How often do you take breaks or time for relaxation activities?", type: "select", options: ["Rarely", "Weekly", "Several times/week", "Daily"] } // [cite: 118, 119]
+            { id: "stressAnxious", label: "How often do you feel stressed or anxious?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, 
+            { id: "workLifeBalance", label: "Can you manage work-life balance effectively?", type: "select", options: ["Never", "Sometimes", "Mostly", "Always"] }, // Fixed: Removed (0)
+            { id: "concentrateMotivated", label: "Do you find it difficult to concentrate or stay motivated?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, 
+            { id: "sadnessBurnout", label: "Experienced persistent sadness, loss of interest, or burnout recently?", type: "select", options: ["Yes", "Occasionally", "No"] }, 
+            { id: "relaxationBreaks", label: "How often do you take breaks or time for relaxation activities?", type: "select", options: ["Rarely", "Weekly", "Several times/week", "Daily"] } 
         ]
     },
     {
         id: "modal5",
         title: "Section 5 & 6: Sleep & Preventive Health (20% Weight)",
         fields: [
-            // Section F: Sleep & Fatigue (10%) [cite: 120]
-            { id: "sleepHours", label: "How many hours do you sleep daily?", type: "select", options: ["<5 hrs", "5–6 hrs", "7–8 hrs", ">8 hrs"] }, // [cite: 121, 122]
-            { id: "refreshed", label: "How often do you wake up feeling refreshed?", type: "select", options: ["Rarely", "Sometimes", "Most days", "Always"] }, // [cite: 123, 124]
-            { id: "screenTimeBed", label: "Do you use screens within 30 minutes before sleep?", type: "select", options: ["Always", "Sometimes", "Rarely", "Never"] }, // [cite: 125, 126]
+            // Section F: Sleep & Fatigue (10%) 
+            { id: "sleepHours", label: "How many hours do you sleep daily?", type: "select", options: ["<5 hrs", "5–6 hrs", "7–8 hrs", ">8 hrs"] }, 
+            { id: "refreshed", label: "How often do you wake up feeling refreshed?", type: "select", options: ["Rarely", "Sometimes", "Most days", "Always"] }, 
+            { id: "screenTimeBed", label: "Do you use screens within 30 minutes before sleep?", type: "select", options: ["Always", "Sometimes", "Rarely", "Never"] }, 
 
-            // Section E: Preventive Health Awareness (10%) [cite: 127]
-            { id: "checkup12Months", label: "Have you done a health checkup in the last 12 months?", type: "select", options: ["No", "Yes"] }, // [cite: 128]
-            { id: "awareVitals", label: "Are you aware of your BMI, BP, or sugar levels?", type: "select", options: ["No", "Yes"] }, // [cite: 129]
-            { id: "interestTips", label: "Would you like to receive preventive care tips or consultations?", type: "select", options: ["No", "Yes"] } // [cite: 130]
+            // Section E: Preventive Health Awareness (10%) 
+            { id: "checkup12Months", label: "Have you done a health checkup in the last 12 months?", type: "select", options: ["No", "Yes"] }, 
+            { id: "awareVitals", label: "Are you aware of your BMI, BP, or sugar levels?", type: "select", options: ["No", "Yes"] }, 
+            { id: "interestTips", label: "Would you like to receive preventive care tips or consultations?", type: "select", options: ["No", "Yes"] } 
         ],
         final: true
     }
@@ -92,11 +92,60 @@ sections.forEach((section, index) => {
     modalContainer.innerHTML += modalHTML;
 });
 
-// Helper function to extract the score number from the option string
-function extractScore(value) {
+// --- REWRITTEN extractScore FUNCTION (FIXES 0 SCORE BUG) ---
+// It now maps the selected text value back to the required point value using a look-up table.
+function extractScore(fieldId, value) {
     if (!value) return 0;
-    const match = value.match(/\(([^)]+)\)/);
-    return match ? parseInt(match[1]) : 0;
+
+    [cite_start]// Scores based on HRA.docx [cite: 20, 22, 24, 26, 28, 30, 32, 33, 34, 35, 37, 40, 42, 44, 46, 48, 51, 53, 55, 57, 58, 59]
+    const scoreMap = {
+        // --- Section B: Lifestyle & Habits ---
+        "smoking": { "Yes": 0, "Occasionally": 1, "No": 3 },
+        "alcohol": { "Regularly": 0, "Occasionally": 1, "Never": 3 },
+
+        // --- Section C: Physical Health & Chronic Risk ---
+        "bpSugar": { "Yes": 0, "No": 3 },
+        "tired": { "Yes": 0, "No": 3 },
+        "waistCircumference": { "Yes": 0, "No": 3 },
+        "discomfort": { "Yes": 0, "Sometimes": 1, "No": 3 },
+        "doctorVisits": { "Rarely": 0, "Once a year": 2, "Twice or more per year": 3 },
+
+        // --- Section D: Mental & Emotional Wellbeing ---
+        "sadnessBurnout": { "Yes": 0, "Occasionally": 1, "No": 3 },
+
+        // --- Section F: Sleep & Fatigue ---
+        "sleepHours": { "<5 hrs": 0, "5–6 hrs": 1, "7–8 hrs": 3, ">8 hrs": 2 },
+
+        // --- Section E: Preventive Health Awareness ---
+        "checkup12Months": { "No": 0, "Yes": 3 },
+        "awareVitals": { "No": 0, "Yes": 3 },
+        "interestTips": { "No": 0, "Yes": 3 },
+    };
+
+    // Fields that follow the sequential score pattern (0, 1, 2, 3) based on option index in sections array.
+    const sequentialFields = [
+        "exerciseFrequency", "fruitsVeg", "processedFood", // Section B
+        "stressAnxious", "workLifeBalance", "concentrateMotivated", "relaxationBreaks", // Section D
+        "refreshed", "screenTimeBed", // Section F
+        "water" // Section B
+    ];
+
+    if (scoreMap[fieldId]) {
+        // Use explicit map for fields with non-sequential or custom scores
+        return scoreMap[fieldId][value] || 0;
+    } else if (sequentialFields.includes(fieldId)) {
+        // Use index for sequential fields (0, 1, 2, 3)
+        // Find the correct field to get the options array
+        const field = sections.flatMap(s => s.fields).find(f => f.id === fieldId);
+        
+        if (field) {
+            // Find the index of the selected value. This index is the score (0, 1, 2, 3).
+            const index = field.options.findIndex(option => option === value);
+            // We return the index directly as the score, as the options are ordered 0-1-2-3.
+            return index; 
+        }
+    }
+    return 0; // Default to 0 if field not found or value is invalid
 }
 
 // Generate form fields dynamically (No change needed)
@@ -199,45 +248,45 @@ function saveData(modalId) {
 // --- 2. NEW WEIGHTED SCORING LOGIC (100 POINTS TOTAL) ---
 function calculateHealthScore() {
     // 2.1. Define Max Raw Scores for Weight Scaling
-    const MAX_RAW_B = 18; // 6 questions * 3 points max [cite: 91, 93, 95, 97, 99, 101]
-    const MAX_RAW_C = 15; // 5 questions * 3 points max [cite: 103, 104, 105, 106, 108]
-    const MAX_RAW_D = 15; // 5 questions * 3 points max [cite: 111, 113, 115, 117, 119]
-    const MAX_RAW_E = 9;  // 3 questions * 3 points max [cite: 128, 129, 130]
-    const MAX_RAW_F = 9;  // 3 questions * 3 points max [cite: 122, 124, 126]
+    const MAX_RAW_B = 18; // 6 questions * 3 points max 
+    const MAX_RAW_C = 15; // 5 questions * 3 points max 
+    const MAX_RAW_D = 15; // 5 questions * 3 points max 
+    const MAX_RAW_E = 9;  // 3 questions * 3 points max 
+    const MAX_RAW_F = 9;  // 3 questions * 3 points max 
     
     // 2.2. Calculate Raw Scores from Form Data (Section A is non-scoring)
     
     // B. Lifestyle & Habits (25%)
-    const rawScoreB = extractScore(formData.exerciseFrequency) +
-                      extractScore(formData.fruitsVeg) +
-                      extractScore(formData.processedFood) +
-                      extractScore(formData.smoking) +
-                      extractScore(formData.alcohol) +
-                      extractScore(formData.water);
+    const rawScoreB = extractScore("exerciseFrequency", formData.exerciseFrequency) +
+                      extractScore("fruitsVeg", formData.fruitsVeg) +
+                      extractScore("processedFood", formData.processedFood) +
+                      extractScore("smoking", formData.smoking) +
+                      extractScore("alcohol", formData.alcohol) +
+                      extractScore("water", formData.water);
 
     // C. Physical Health & Chronic Risk (30%)
-    const rawScoreC = extractScore(formData.bpSugar) +
-                      extractScore(formData.tired) +
-                      extractScore(formData.waistCircumference) +
-                      extractScore(formData.discomfort) +
-                      extractScore(formData.doctorVisits);
+    const rawScoreC = extractScore("bpSugar", formData.bpSugar) +
+                      extractScore("tired", formData.tired) +
+                      extractScore("waistCircumference", formData.waistCircumference) +
+                      extractScore("discomfort", formData.discomfort) +
+                      extractScore("doctorVisits", formData.doctorVisits);
 
     // D. Mental & Emotional Wellbeing (25%)
-    const rawScoreD = extractScore(formData.stressAnxious) +
-                      extractScore(formData.workLifeBalance) +
-                      extractScore(formData.concentrateMotivated) +
-                      extractScore(formData.sadnessBurnout) +
-                      extractScore(formData.relaxationBreaks);
+    const rawScoreD = extractScore("stressAnxious", formData.stressAnxious) +
+                      extractScore("workLifeBalance", formData.workLifeBalance) +
+                      extractScore("concentrateMotivated", formData.concentrateMotivated) +
+                      extractScore("sadnessBurnout", formData.sadnessBurnout) +
+                      extractScore("relaxationBreaks", formData.relaxationBreaks);
 
     // E. Preventive Health & Awareness (10%)
-    const rawScoreE = extractScore(formData.checkup12Months) +
-                      extractScore(formData.awareVitals) +
-                      extractScore(formData.interestTips);
+    const rawScoreE = extractScore("checkup12Months", formData.checkup12Months) +
+                      extractScore("awareVitals", formData.awareVitals) +
+                      extractScore("interestTips", formData.interestTips);
 
     // F. Sleep & Fatigue (10%)
-    const rawScoreF = extractScore(formData.sleepHours) +
-                      extractScore(formData.refreshed) +
-                      extractScore(formData.screenTimeBed);
+    const rawScoreF = extractScore("sleepHours", formData.sleepHours) +
+                      extractScore("refreshed", formData.refreshed) +
+                      extractScore("screenTimeBed", formData.screenTimeBed);
 
     // 2.3. Scale Raw Scores to 100-Point Total based on Weights 
     let score = (rawScoreB / MAX_RAW_B * 25) +
@@ -315,31 +364,31 @@ function calculateParameterScore(parameter) {
     switch (parameter) {
         // B. Lifestyle & Habits (Max Raw: 18)
         case "Lifestyle & Habits":
-            rawScore = extractScore(formData.exerciseFrequency) + extractScore(formData.fruitsVeg) + extractScore(formData.processedFood) + extractScore(formData.smoking) + extractScore(formData.alcohol) + extractScore(formData.water);
+            rawScore = extractScore("exerciseFrequency", formData.exerciseFrequency) + extractScore("fruitsVeg", formData.fruitsVeg) + extractScore("processedFood", formData.processedFood) + extractScore("smoking", formData.smoking) + extractScore("alcohol", formData.alcohol) + extractScore("water", formData.water);
             maxRaw = 18;
             break;
 
         // C. Physical Health & Chronic Risk (Max Raw: 15)
         case "Physical Health & Chronic Risk":
-            rawScore = extractScore(formData.bpSugar) + extractScore(formData.tired) + extractScore(formData.waistCircumference) + extractScore(formData.discomfort) + extractScore(formData.doctorVisits);
+            rawScore = extractScore("bpSugar", formData.bpSugar) + extractScore("tired", formData.tired) + extractScore("waistCircumference", formData.waistCircumference) + extractScore("discomfort", formData.discomfort) + extractScore("doctorVisits", formData.doctorVisits);
             maxRaw = 15;
             break;
 
         // D. Mental & Emotional Wellbeing (Max Raw: 15)
         case "Mental & Emotional Wellbeing":
-            rawScore = extractScore(formData.stressAnxious) + extractScore(formData.workLifeBalance) + extractScore(formData.concentrateMotivated) + extractScore(formData.sadnessBurnout) + extractScore(formData.relaxationBreaks);
+            rawScore = extractScore("stressAnxious", formData.stressAnxious) + extractScore("workLifeBalance", formData.workLifeBalance) + extractScore("concentrateMotivated", formData.concentrateMotivated) + extractScore("sadnessBurnout", formData.sadnessBurnout) + extractScore("relaxationBreaks", formData.relaxationBreaks);
             maxRaw = 15;
             break;
 
         // E. Preventive Health & Awareness (Max Raw: 9)
         case "Preventive Health & Awareness":
-            rawScore = extractScore(formData.checkup12Months) + extractScore(formData.awareVitals) + extractScore(formData.interestTips);
+            rawScore = extractScore("checkup12Months", formData.checkup12Months) + extractScore("awareVitals", formData.awareVitals) + extractScore("interestTips", formData.interestTips);
             maxRaw = 9;
             break;
         
         // F. Sleep & Fatigue (Max Raw: 9)
         case "Sleep & Fatigue":
-            rawScore = extractScore(formData.sleepHours) + extractScore(formData.refreshed) + extractScore(formData.screenTimeBed);
+            rawScore = extractScore("sleepHours", formData.sleepHours) + extractScore("refreshed", formData.refreshed) + extractScore("screenTimeBed", formData.screenTimeBed);
             maxRaw = 9;
             break;
     }
@@ -380,10 +429,8 @@ function getOverallHealthSuggestion(score, riskStatus) {
     }
 }
 
-// --- 4. TEMPORARY STUB FUNCTIONS FOR RISK DETAILS (You must customize these) ---
-// Note: Since HRA.docx only provides high-level text for the overall score, 
-// I am providing generic, consolidated subtitles and suggestions based on the new risk areas.
-// You must refine these with NIZCARE's specific content.
+// --- 4. TEMPORARY STUB FUNCTIONS FOR RISK DETAILS ---
+// (No changes here, keeping the text you previously provided)
 
 function getRiskSubtitle(parameter, riskLevel) {
     const subtitles = {
@@ -458,10 +505,8 @@ function getDetailedSuggestions(parameter, riskLevel) {
 }
 
 
-// Remaining functions (generateSummaryTable, generateHealthRiskTable, generateRiskDetails, generatePDF) 
-// are generic and will adapt to the new data, thus requiring minimal changes.
+// --- PDF GENERATION FUNCTIONS ---
 
-// Ensure all supporting PDF generation functions are included (as they were in the original file)
 function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
@@ -470,8 +515,8 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
 
+    // FIX: Removed the score line to only show Risk Status to the user
     let summaryData = [
-        ["Overall Health Score", `${score}/100`],
         ["Risk Status", riskStatus],
     ];
 
@@ -544,11 +589,13 @@ function generateRiskDetails(doc, y, healthAreas) {
             doc.addPage();
             y = 20;
         }
+        
+        // Removed Risk Score from this table to adhere to no visible score policy, 
+        // leaving only the Risk Level.
         doc.autoTable({
             startY: y,
             head: [["Metric", "Value"]],
             body: [
-                ["Risk Score", `${riskScore}/10`],
                 ["Risk Level", { content: riskLevel, styles: { textColor: riskColor } }]
             ],
             theme: "grid",
