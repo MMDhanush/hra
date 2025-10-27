@@ -414,9 +414,9 @@ function saveData(modalId) {
 
 function getRiskColor(riskLevel) {
     if (riskLevel === "High Risk") return [255, 0, 0]; // Red
-    if (riskLevel === "At Risk") return [255, 165, 0]; // Orange
+    if (riskLevel === "At Risk") return [255, 128, 0]; // Orange
     if (riskLevel === "Moderate Risk") return [255, 255, 0]; // Yellow
-    return [0, 128, 0]; // Green (Low Risk)
+    return [0, 255, 0]; // Green (Low Risk)
 }
 
 function getRiskColor1(riskLevel) {
@@ -486,12 +486,12 @@ function getDetailedSuggestions(parameter, riskLevel) {
 function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     const ACCENT_COLOR = [44, 62, 80]; // Dark blue/gray for professional look
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("calibri", "bold");
     doc.setFontSize(14);
     doc.text("Overall Health Summary", 105, 50, { align: "center" });
 
     doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("calibri", "normal");
 
     let summaryData = [
         ["Overall Health Score", `${score}/100`],
@@ -504,17 +504,17 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
         body: summaryData,
         theme: "grid",
         headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 10, halign: "center" },
+        styles: { fontSize: 12, halign: "center" },
         alternateRowStyles: { fillColor: [240, 240, 240] }
     });
 
     let y = doc.autoTable.previous.finalY + 10;
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("calibri", "bold");
     doc.text("Overall Health Suggestions:", 14, y);
     y += 6;
 
-    doc.setFont("helvetica", "normal");
+    doc.setFont("calibri", "normal");
     overallHealthSuggestion.forEach((suggestion) => {
         doc.text(`• ${suggestion}`, 14, y);
         y += 6;
@@ -526,7 +526,7 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
 function generateHealthRiskTable(doc, y, healthAreas) {
     const ACCENT_COLOR = [44, 62, 80];
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("calibri", "bold");
     doc.text("Health Area Risk Levels", 105, y, { align: "center" });
 
     y += 8;
@@ -545,7 +545,7 @@ function generateHealthRiskTable(doc, y, healthAreas) {
         body: healthData,
         theme: "grid",
         headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 10, halign: "center" },
+        styles: { fontSize: 12, halign: "center" },
         alternateRowStyles: { fillColor: [240, 240, 240] }
     });
 
@@ -566,7 +566,7 @@ function generateRiskDetails(doc, y, healthAreas) {
         let subtitleText = getRiskSubtitle(key, riskLevel);
         let riskColor = getRiskColor(riskLevel);
 
-        doc.setFont("helvetica", "bold");
+        doc.setFont("calibri", "bold");
         doc.setFontSize(12);
         doc.text(key, 14, y);
         y += 6;
@@ -585,7 +585,7 @@ function generateRiskDetails(doc, y, healthAreas) {
             ],
             theme: "grid",
             headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-            styles: { fontSize: 10, halign: "center" },
+            styles: { fontSize: 12, halign: "center" },
             alternateRowStyles: { fillColor: [240, 240, 240] }
         });
 
@@ -596,10 +596,10 @@ function generateRiskDetails(doc, y, healthAreas) {
             y = 20;
         }
         // Bold title for subtitle/meaning section
-        doc.setFont("helvetica", "bold");
+        doc.setFont("calibri", "bold");
         doc.text(subtitleText[0], 14, y);
         y += 6;
-        doc.setFont("helvetica", "normal");
+        doc.setFont("calibri", "normal");
 
         let lines = doc.splitTextToSize(subtitleText.slice(1).join("\n"), 180);
         doc.text(lines, 14, y);
@@ -611,10 +611,10 @@ function generateRiskDetails(doc, y, healthAreas) {
                 y = 20;
             }
             let suggestions = getDetailedSuggestions(key, riskLevel);
-            doc.setFont("helvetica", "bold");
+            doc.setFont("calibri", "bold");
             doc.text("How to Improve:", 14, y);
             y += 6;
-            doc.setFont("helvetica", "normal");
+            doc.setFont("calibri", "normal");
 
             let suggestionLines = doc.splitTextToSize(suggestions.join("\n"), 180);
             doc.text(suggestionLines, 14, y);
@@ -660,7 +660,7 @@ function generatePDF() {
 
     const generateContent = function () {
         // Set document header font and colors
-        doc.setFont("helvetica", "bold");
+        doc.setFont("calibri", "bold");
         doc.setTextColor(44, 62, 80); // Dark Blue/Gray
         doc.setFontSize(16);
         doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" });
