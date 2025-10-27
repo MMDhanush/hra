@@ -1,78 +1,97 @@
-// --- 1. NEW QUESTION SET (SECTIONS A-F) - CLEANED OPTIONS ---
-// Removed incomplete citation tags that caused "cite_start is not defined" error.
+// --- 1. NEW QUESTION SET (SECTIONS A-G) ---
+// The questions are grouped into five modals for a smooth user flow.
 const sections = [
     {
         id: "modal1",
-        title: "Section 1: Basic Profile (Non-Scoring)",
+        title: "Section A: Basic Profile (Non-scoring)",
         fields: [
-            { id: "ageGroup", label: "Age Group", type: "select", options: ["<25", "25–34", "35–44", "45–54", "55+"] }, 
-            { id: "gender", label: "Gender", type: "select", options: ["Male", "Female", "Other"] }, 
-            { id: "occupationType", label: "Occupation Type", type: "select", options: ["Desk job", "Field job", "Shift work"] }, 
-            { id: "workLocation", label: "Work Location (City, State)", type: "text" }, 
-            { id: "maritalStatus", label: "Marital Status", type: "text" }, 
-            { id: "existingConditions", label: "Any existing diagnosed conditions?", type: "text" } 
+            { id: "age", label: "Age", type: "number" },
+            { id: "gender", label: "Gender", type: "select", options: ["Male", "Female", "Other"] },
+            { id: "occupationType", label: "Occupation type", type: "select", options: ["Desk job", "Field job", "Shift work"] },
+            { id: "workLocation", label: "Work location", type: "text" },
+            // Family history of major NCDs is gathered as a single text field
+            { id: "familyHistoryNCDs", label: "Family history of major NCDs (CVD, Diabetes, Cancer, CKD, Hypertension)", type: "text" }
         ]
     },
     {
         id: "modal2",
-        title: "Section 2: Lifestyle & Habits (25% Weight)",
+        title: "Section B: Lifestyle & Habits (20 points)",
         fields: [
-            { id: "exerciseFrequency", label: "How often do you exercise for at least 30 minutes?", type: "select", options: ["Never", "1–2 days", "3–4 days", "5+ days "] }, 
-            { id: "fruitsVeg", label: "How often do you eat fruits and vegetables daily?", type: "select", options: ["Rarely", "1 serving/day", "2 servings/day", "3+ servings/day"] }, 
-            { id: "processedFood", label: "How often do you consume fried or processed food?", type: "select", options: ["Daily", "3–4 times/week", "Occasionally", "Rarely"] }, 
-            { id: "smoking", label: "Do you smoke or use tobacco?", type: "select", options: ["Yes", "Occasionally", "No"] }, 
-            { id: "alcohol", label: "Do you consume alcohol?", type: "select", options: ["Regularly", "Occasionally", "Never"] }, 
-            { id: "water", label: "How many glasses of water do you drink per day?", type: "select", options: ["<4", "4–6", "7–8", "8+"] } 
+            { id: "exercise", label: "Exercise ≥30 min/week", type: "select", options: ["0 days", "1–2 days", "3–4 days", "5+ days"] },
+            { id: "fruitsVeg", label: "Fruits & vegetables intake", type: "select", options: ["Rarely", "3–4 times/week", "Daily"] },
+            { id: "processedFood", label: "Fried/processed food consumption", type: "select", options: ["4+ times/week", "2–3 times/week", "Rarely"] },
+            { id: "tobaccoAlcohol", label: "Tobacco/alcohol usage", type: "select", options: ["Regular", "Occasionally", "None"] },
+            { id: "water", label: "Water intake/day", type: "select", options: ["<4 glasses", "4–6", "7–8", "8+"] }
         ]
     },
     {
         id: "modal3",
-        title: "Section 3: Physical Health & Chronic Risk (30% Weight)",
+        title: "Section C: Physical Health & NCD Risk (30 points)",
         fields: [
-            { id: "bpSugar", label: "High blood pressure or sugar levels diagnosis?", type: "select", options: ["Yes", "No"] }, 
-            { id: "tired", label: "Do you often feel tired even after normal rest?", type: "select", options: ["Yes", "No"] }, 
-            { id: "waistCircumference", label: "Is your waist circumference above healthy limit (90cm/80cm)?", type: "select", options: ["Yes", "No"] }, 
-            { id: "discomfort", label: "Do you experience frequent headaches, dizziness, or breathlessness?", type: "select", options: ["Yes", "Sometimes", "No"] }, 
-            { id: "doctorVisits", label: "How often do you visit a doctor for general checkups?", type: "select", options: ["Rarely", "Once a year", "Twice or more per year"] } 
+            // CVD
+            { id: "bpDiagnosis", label: "High BP diagnosed/known?", type: "select", options: ["Yes", "No"] },
+            { id: "chestPain", label: "Chest pain/palpitations?", type: "select", options: ["Yes", "Sometimes", "No"] },
+            { id: "cvdFamilyHistory", label: "Family history of CVD?", type: "select", options: ["Yes", "No"] },
+            // Diabetes
+            { id: "sugarDiagnosis", label: "High blood sugar diagnosed?", type: "select", options: ["Yes", "No"] },
+            { id: "excessiveThirst", label: "Excessive thirst/frequent urination/unexplained weight change?", type: "select", options: ["Yes", "Sometimes", "No"] },
+            { id: "diabetesFamilyHistory", label: "Family history of diabetes?", type: "select", options: ["Yes", "No"] },
+            // Obesity & Metabolic Syndrome
+            { id: "waistCircumference", label: "Waist circumference >90cm (men)/>80cm (women)?", type: "select", options: ["Yes", "No"] },
+            { id: "bmiOver25", label: "BMI >25 kg/m²?", type: "select", options: ["Yes", "No"] },
+            // Chronic Respiratory Diseases
+            { id: "asthmaCOPD", label: "Asthma/COPD/frequent cough/wheezing?", type: "select", options: ["Yes", "Sometimes", "No"] },
+            { id: "smokeExposure", label: "Exposure to smoke/pollution/occupational dust?", type: "select", options: ["Yes", "No"] },
+            // Cancer Awareness & Screening
+            { id: "cancerAwareness", label: "Aware of recommended cancer screenings?", type: "select", options: ["Yes", "No"] },
+            { id: "cancerFamilyHistory", label: "Family history of cancer?", type: "select", options: ["Yes", "No"] },
+            // Chronic Kidney Disease (CKD)
+            { id: "swellingKidney", label: "Swelling in legs/face or known kidney issues?", type: "select", options: ["Yes", "No"] },
+            { id: "diabetesHypertension", label: "Have diabetes/long-standing hypertension?", type: "select", options: ["Yes", "No"] },
+            // Musculoskeletal Disorders
+            { id: "jointBackPain", label: "Persistent joint/back pain or difficulty in daily activity?", type: "select", options: ["Yes", "Sometimes", "No"] }
         ]
     },
     {
         id: "modal4",
-        title: "Section 4: Mental & Emotional Wellbeing (25% Weight)",
+        title: "Section D: Mental & Emotional Wellbeing (15 points) & Section F: Sleep & Fatigue (10 points)",
         fields: [
-            { id: "stressAnxious", label: "How often do you feel stressed or anxious?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, 
-            { id: "workLifeBalance", label: "Can you manage work-life balance effectively?", type: "select", options: ["Never", "Sometimes", "Mostly", "Always"] }, 
-            { id: "concentrateMotivated", label: "Do you find it difficult to concentrate or stay motivated?", type: "select", options: ["Often", "Sometimes", "Rarely", "Never"] }, 
-            { id: "sadnessBurnout", label: "Experienced persistent sadness, loss of interest, or burnout recently?", type: "select", options: ["Yes", "Occasionally", "No"] }, 
-            { id: "relaxationBreaks", label: "How often do you take breaks or time for relaxation activities?", type: "select", options: ["Rarely", "Weekly", "Several times/week", "Daily"] } 
+            // Section D
+            { id: "stressedAnxious", label: "Feeling stressed or anxious", type: "select", options: ["Almost every day", "Often", "Occasionally", "Rarely"] },
+            { id: "sadnessBurnout", label: "Persistent sadness/burnout", type: "select", options: ["Yes", "Sometimes", "No"] },
+            { id: "workLifeBalance", label: "Work-life balance", type: "select", options: ["Poorly", "Average", "Well"] },
+            { id: "relaxationCoping", label: "Relaxation & coping", type: "select", options: ["Rarely", "Sometimes", "Often"] },
+            // Section F
+            { id: "avgSleep", label: "Average sleep/day", type: "select", options: ["<5 hrs", "5–6 hrs", "7–8 hrs"] },
+            { id: "daytimeTiredness", label: "Daytime tiredness", type: "select", options: ["Always", "Sometimes", "Rarely"] },
+            { id: "screenTimeBed", label: "Screen usage 30 min before bed", type: "select", options: ["Always", "Sometimes", "Rarely/Never"] }
         ]
     },
     {
         id: "modal5",
-        title: "Section 5 & 6: Sleep & Preventive Health (20% Weight)",
+        title: "Section G: Digital & Social Wellness (15 points) & Section E: Preventive Health (10 points)",
+        final: true,
         fields: [
-            // Section F: Sleep & Fatigue (10%) 
-            { id: "sleepHours", label: "How many hours do you sleep daily?", type: "select", options: ["<5 hrs", "5–6 hrs", "7–8 hrs", ">8 hrs"] }, 
-            { id: "refreshed", label: "How often do you wake up feeling refreshed?", type: "select", options: ["Rarely", "Sometimes", "Most days", "Always"] }, 
-            { id: "screenTimeBed", label: "Do you use screens within 30 minutes before sleep?", type: "select", options: ["Always", "Sometimes", "Rarely", "Never"] }, 
-
-            // Section E: Preventive Health Awareness (10%) 
-            { id: "checkup12Months", label: "Have you done a health checkup in the last 12 months?", type: "select", options: ["No", "Yes"] }, 
-            { id: "awareVitals", label: "Are you aware of your BMI, BP, or sugar levels?", type: "select", options: ["No", "Yes"] }, 
-            { id: "interestTips", label: "Would you like to receive preventive care tips or consultations?", type: "select", options: ["No", "Yes"] } 
-        ],
-        final: true
+            // Section G
+            { id: "dailyScreenTime", label: "Daily screen time (non-work)", type: "select", options: [">5 hrs", "3–5 hrs", "<3 hrs"] },
+            { id: "offlineLeisure", label: "Outdoor/offline leisure", type: "select", options: ["Rarely", "Once/week", "Multiple times/week"] },
+            { id: "socialConnections", label: "Social connections", type: "select", options: ["Rarely", "Occasionally", "Regularly"] },
+            { id: "digitalWLB", label: "Work-life balance (digital overload)", type: "select", options: ["Poor", "Average", "Well"] },
+            // Section E
+            { id: "lastCheckup", label: "Last full-body checkup", type: "select", options: ["Never", ">2 yrs ago", "Within 1 yr", "Within 6 months"] },
+            { id: "awarenessVitals", label: "Awareness of BP, sugar, cholesterol, BMI", type: "select", options: ["No", "Partially", "Yes"] },
+            { id: "vaccinations", label: "Vaccinations/Preventive screenings", type: "select", options: ["No", "Partially", "Yes"] }
+        ]
     }
 ];
 
 let formData = {};
 const modalContainer = document.getElementById("modals-container");
 
-// The modal setup loop remains the same, but it now uses the new 'sections' array
 sections.forEach((section, index) => {
     let modalHTML = `
         <div id="${section.id}" class="modal fade" tabindex="-1" inert>
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">${section.title}</h5>
@@ -92,70 +111,256 @@ sections.forEach((section, index) => {
     modalContainer.innerHTML += modalHTML;
 });
 
+// --- CORE SCORING LOGIC ---
 
-// --- REWRITTEN extractScore FUNCTION (FIXES SCORE CALCULATION) ---
-// It now maps the selected text value back to the required point value using a look-up table 
-// based on the HRA.docx logic (e.g., Yes=0, No=3 or sequential scores).
+// Rewritten extractScore function based on the new point values
 function extractScore(fieldId, value) {
     if (!value) return 0;
 
-    // Scores based on HRA.docx
+    // Direct mapping for irregular scores (not 0, 5, 10, 15) or binary
     const scoreMap = {
-        // --- Section B: Lifestyle & Habits ---
-        "smoking": { "Yes": 0, "Occasionally": 1, "No": 3 }, // [cite: 25, 26]
-        "alcohol": { "Regularly": 0, "Occasionally": 1, "Never": 3 }, // [cite: 27, 28]
+        // Section B
+        "exercise": { "0 days": 0, "1–2 days": 5, "3–4 days": 10, "5+ days": 15 },
+        "fruitsVeg": { "Rarely": 0, "3–4 times/week": 5, "Daily": 10 },
+        "processedFood": { "4+ times/week": 0, "2–3 times/week": 5, "Rarely": 10 },
+        "tobaccoAlcohol": { "Regular": 0, "Occasionally": 5, "None": 10 },
+        "water": { "<4 glasses": 0, "4–6": 2, "7–8": 3, "8+": 5 }, // Irregular 0, 2, 3, 5
 
-        // --- Section C: Physical Health & Chronic Risk ---
-        "bpSugar": { "Yes": 0, "No": 3 }, // [cite: 32]
-        "tired": { "Yes": 0, "No": 3 }, // [cite: 33]
-        "waistCircumference": { "Yes": 0, "No": 3 }, // [cite: 34]
-        "discomfort": { "Yes": 0, "Sometimes": 1, "No": 3 }, // [cite: 35]
-        "doctorVisits": { "Rarely": 0, "Once a year": 2, "Twice or more per year": 3 }, // [cite: 37]
+        // Section C - CVD
+        "bpDiagnosis": { "Yes": 0, "No": 5 },
+        "chestPain": { "Yes": 0, "Sometimes": 2, "No": 5 },
+        "cvdFamilyHistory": { "Yes": 0, "No": 3 },
+        // Section C - Diabetes
+        "sugarDiagnosis": { "Yes": 0, "No": 5 },
+        "excessiveThirst": { "Yes": 0, "Sometimes": 2, "No": 5 },
+        "diabetesFamilyHistory": { "Yes": 0, "No": 3 },
+        // Section C - Obesity
+        "waistCircumference": { "Yes": 0, "No": 5 },
+        "bmiOver25": { "Yes": 0, "No": 5 },
+        // Section C - Respiratory
+        "asthmaCOPD": { "Yes": 0, "Sometimes": 2, "No": 5 },
+        "smokeExposure": { "Yes": 0, "No": 3 },
+        // Section C - Cancer
+        "cancerAwareness": { "Yes": 5, "No": 0 },
+        "cancerFamilyHistory": { "Yes": 0, "No": 3 },
+        // Section C - CKD
+        "swellingKidney": { "Yes": 0, "No": 5 },
+        "diabetesHypertension": { "Yes": 0, "No": 3 },
+        // Section C - Musculoskeletal
+        "jointBackPain": { "Yes": 0, "Sometimes": 2, "No": 5 },
 
-        // --- Section D: Mental & Emotional Wellbeing ---
-        "sadnessBurnout": { "Yes": 0, "Occasionally": 1, "No": 3 }, // [cite: 45, 46]
+        // Section D
+        "stressedAnxious": { "Almost every day": 0, "Often": 5, "Occasionally": 10, "Rarely": 15 },
+        "sadnessBurnout": { "Yes": 0, "Sometimes": 5, "No": 10 },
+        "workLifeBalance": { "Poorly": 0, "Average": 5, "Well": 10 },
+        "relaxationCoping": { "Rarely": 0, "Sometimes": 5, "Often": 10 },
 
-        // --- Section F: Sleep & Fatigue ---
-        "sleepHours": { "<5 hrs": 0, "5–6 hrs": 1, "7–8 hrs": 3, ">8 hrs": 2 }, // [cite: 51]
+        // Section E
+        "lastCheckup": { "Never": 0, ">2 yrs ago": 5, "Within 1 yr": 10, "Within 6 months": 15 }, // Irregular 0, 5, 10, 15
+        "awarenessVitals": { "No": 0, "Partially": 5, "Yes": 10 },
+        "vaccinations": { "No": 0, "Partially": 5, "Yes": 10 },
+        
+        // Section F
+        "avgSleep": { "<5 hrs": 0, "5–6 hrs": 5, "7–8 hrs": 10 },
+        "daytimeTiredness": { "Always": 0, "Sometimes": 5, "Rarely": 10 },
+        "screenTimeBed": { "Always": 0, "Sometimes": 2, "Rarely/Never": 5 }, // Irregular 0, 2, 5
 
-        // --- Section E: Preventive Health Awareness ---
-        "checkup12Months": { "No": 0, "Yes": 3 }, // [cite: 57]
-        "awareVitals": { "No": 0, "Yes": 3 }, // [cite: 58]
-        "interestTips": { "No": 0, "Yes": 3 }, // [cite: 59]
+        // Section G
+        "dailyScreenTime": { ">5 hrs": 0, "3–5 hrs": 5, "<3 hrs": 10 },
+        "offlineLeisure": { "Rarely": 0, "Once/week": 5, "Multiple times/week": 10 },
+        "socialConnections": { "Rarely": 0, "Occasionally": 5, "Regularly": 10 },
+        "digitalWLB": { "Poor": 0, "Average": 5, "Well": 10 },
     };
 
-    // Fields that follow the sequential score pattern (0, 1, 2, 3) based on option index in sections array.
-    const sequentialFields = [
-        "exerciseFrequency", // Never(0) / 1-2 days(1) / 3-4 days(2) / 5+ days(3) [cite: 20]
-        "fruitsVeg", // Rarely(0) / 1 serving/day(1) / 2 servings/day(2) / 3+ servings/day(3) [cite: 22]
-        "processedFood", // Daily(0) / 3-4 times/week(1) / Occasionally(2) / Rarely(3) [cite: 24]
-        "water", // <4(0) / 4-6(1) / 7-8(2) / 8+(3) [cite: 30]
-
-        "stressAnxious", // Often(0) / Sometimes(1) / Rarely(2) / Never(3) [cite: 40]
-        "workLifeBalance", // Never(0) / Sometimes(1) / Mostly(2) / Always(3) [cite: 42]
-        "concentrateMotivated", // Often(0) / Sometimes(1) / Rarely(2) / Never(3) [cite: 44]
-        "relaxationBreaks", // Rarely(0) / Weekly(1) / Several times/week(2) / Daily(3) [cite: 48]
-
-        "refreshed", // Rarely(0) / Sometimes(1) / Most days(2) / Always(3) [cite: 53]
-        "screenTimeBed" // Always(0) / Sometimes(1) / Rarely(2) / Never(3) [cite: 55]
-    ];
-
-    if (scoreMap[fieldId]) {
-        // Use explicit map for fields with non-sequential or custom scores
-        return scoreMap[fieldId][value] || 0;
-    } else if (sequentialFields.includes(fieldId)) {
-        // Use index for sequential fields (0, 1, 2, 3)
-        const field = sections.flatMap(s => s.fields).find(f => f.id === fieldId);
-        
-        if (field) {
-            // Find the index of the selected value. This index is the score (0, 1, 2, 3).
-            const index = field.options.findIndex(option => option === value);
-            return index >= 0 ? index : 0; 
-        }
-    }
-    return 0; // Default to 0 if field not found or value is invalid
+    return scoreMap[fieldId] ? scoreMap[fieldId][value] || 0 : 0;
 }
 
+function calculateHealthScore() {
+    // New Max Raw Scores based on document calculation:
+    const MAX_RAW_B = 50; // 15 + 10 + 10 + 10 + 5
+    const MAX_RAW_C = 65; // 13 + 13 + 10 + 8 + 8 + 8 + 5
+    const MAX_RAW_D = 45; // 15 + 10 + 10 + 10
+    const MAX_RAW_E = 35; // 15 + 10 + 10
+    const MAX_RAW_F = 25; // 10 + 10 + 5
+    const MAX_RAW_G = 40; // 10 + 10 + 10 + 10
+
+    // 2.2. Calculate Raw Scores
+    // B. Lifestyle & Habits (20%)
+    const rawScoreB = extractScore("exercise", formData.exercise) +
+                      extractScore("fruitsVeg", formData.fruitsVeg) +
+                      extractScore("processedFood", formData.processedFood) +
+                      extractScore("tobaccoAlcohol", formData.tobaccoAlcohol) +
+                      extractScore("water", formData.water);
+
+    // C. Physical Health & NCD Risk (30%)
+    const rawScoreC = extractScore("bpDiagnosis", formData.bpDiagnosis) + extractScore("chestPain", formData.chestPain) + extractScore("cvdFamilyHistory", formData.cvdFamilyHistory) +
+                      extractScore("sugarDiagnosis", formData.sugarDiagnosis) + extractScore("excessiveThirst", formData.excessiveThirst) + extractScore("diabetesFamilyHistory", formData.diabetesFamilyHistory) +
+                      extractScore("waistCircumference", formData.waistCircumference) + extractScore("bmiOver25", formData.bmiOver25) +
+                      extractScore("asthmaCOPD", formData.asthmaCOPD) + extractScore("smokeExposure", formData.smokeExposure) +
+                      extractScore("cancerAwareness", formData.cancerAwareness) + extractScore("cancerFamilyHistory", formData.cancerFamilyHistory) +
+                      extractScore("swellingKidney", formData.swellingKidney) + extractScore("diabetesHypertension", formData.diabetesHypertension) +
+                      extractScore("jointBackPain", formData.jointBackPain);
+
+    // D. Mental & Emotional Wellbeing (15%)
+    const rawScoreD = extractScore("stressedAnxious", formData.stressedAnxious) +
+                      extractScore("sadnessBurnout", formData.sadnessBurnout) +
+                      extractScore("workLifeBalance", formData.workLifeBalance) +
+                      extractScore("relaxationCoping", formData.relaxationCoping);
+    
+    // E. Preventive Health & Awareness (10%)
+    const rawScoreE = extractScore("lastCheckup", formData.lastCheckup) +
+                      extractScore("awarenessVitals", formData.awarenessVitals) +
+                      extractScore("vaccinations", formData.vaccinations);
+    
+    // F. Sleep & Fatigue (10%)
+    const rawScoreF = extractScore("avgSleep", formData.avgSleep) +
+                      extractScore("daytimeTiredness", formData.daytimeTiredness) +
+                      extractScore("screenTimeBed", formData.screenTimeBed);
+
+    // G. Digital & Social Wellness (15%)
+    const rawScoreG = extractScore("dailyScreenTime", formData.dailyScreenTime) +
+                      extractScore("offlineLeisure", formData.offlineLeisure) +
+                      extractScore("socialConnections", formData.socialConnections) +
+                      extractScore("digitalWLB", formData.digitalWLB);
+
+    // 2.3. Scale Raw Scores to 100-Point Total based on Weights
+    let score = (rawScoreB / MAX_RAW_B * 20) +
+                (rawScoreC / MAX_RAW_C * 30) +
+                (rawScoreD / MAX_RAW_D * 15) +
+                (rawScoreE / MAX_RAW_E * 10) +
+                (rawScoreF / MAX_RAW_F * 10) +
+                (rawScoreG / MAX_RAW_G * 15);
+
+    // Ensure score stays within 0-100 range and is an integer
+    score = Math.round(Math.max(0, Math.min(score, 100)));
+
+    // 2.4. Determine Risk Status based on new ranges 
+    let riskStatus;
+    if (score >= 81) {
+        riskStatus = "Low Risk"; // 81–100 
+    } else if (score >= 61) {
+        riskStatus = "Moderate Risk"; // 61–80 
+    } else if (score >= 41) {
+        riskStatus = "At Risk"; // 41–60 
+    } else {
+        riskStatus = "High Risk"; // 0–40 
+    }
+
+    return { score, riskStatus };
+}
+
+// --- Parameter Score Logic and Helpers ---
+
+function getHealthAreas() {
+    // New health areas based on document sections B, C, D, E, F, G
+    const areas = {
+        "Lifestyle & Habits": "Lifestyle & Habits", // B
+        "Physical Health & NCD Risk": "Physical Health & NCD Risk", // C
+        "Mental & Emotional Wellbeing": "Mental & Emotional Wellbeing", // D
+        "Preventive Health & Awareness": "Preventive Health & Awareness", // E
+        "Sleep & Fatigue": "Sleep & Fatigue", // F
+        "Digital & Social Wellness": "Digital & Social Wellness" // G
+    };
+
+    function determineRisk(parameter) {
+        const paramScore = calculateParameterScore(parameter);
+        // Scaling a 10-point parameter score to 4 risk levels
+        if (paramScore <= 2) return "High Risk";
+        if (paramScore <= 4) return "At Risk";
+        if (paramScore <= 7) return "Moderate Risk";
+        return "Low Risk";
+    }
+
+    return {
+        "Lifestyle & Habits": determineRisk(areas["Lifestyle & Habits"]),
+        "Physical Health & NCD Risk": determineRisk(areas["Physical Health & NCD Risk"]),
+        "Mental & Emotional Wellbeing": determineRisk(areas["Mental & Emotional Wellbeing"]),
+        "Preventive Health & Awareness": determineRisk(areas["Preventive Health & Awareness"]),
+        "Sleep & Fatigue": determineRisk(areas["Sleep & Fatigue"]),
+        "Digital & Social Wellness": determineRisk(areas["Digital & Social Wellness"])
+    };
+}
+
+// Updated Parameter Score Logic (Max 10 points per area, scaled from Max Raw)
+function calculateParameterScore(parameter) {
+    let rawScore = 0;
+    let maxRaw = 1;
+
+    // Must replicate the raw score calculation logic from calculateHealthScore
+    switch (parameter) {
+        case "Lifestyle & Habits": // Section B
+            rawScore = extractScore("exercise", formData.exercise) + extractScore("fruitsVeg", formData.fruitsVeg) + extractScore("processedFood", formData.processedFood) + extractScore("tobaccoAlcohol", formData.tobaccoAlcohol) + extractScore("water", formData.water);
+            maxRaw = 50;
+            break;
+
+        case "Physical Health & NCD Risk": // Section C
+            rawScore = extractScore("bpDiagnosis", formData.bpDiagnosis) + extractScore("chestPain", formData.chestPain) + extractScore("cvdFamilyHistory", formData.cvdFamilyHistory) +
+                       extractScore("sugarDiagnosis", formData.sugarDiagnosis) + extractScore("excessiveThirst", formData.excessiveThirst) + extractScore("diabetesFamilyHistory", formData.diabetesFamilyHistory) +
+                       extractScore("waistCircumference", formData.waistCircumference) + extractScore("bmiOver25", formData.bmiOver25) +
+                       extractScore("asthmaCOPD", formData.asthmaCOPD) + extractScore("smokeExposure", formData.smokeExposure) +
+                       extractScore("cancerAwareness", formData.cancerAwareness) + extractScore("cancerFamilyHistory", formData.cancerFamilyHistory) +
+                       extractScore("swellingKidney", formData.swellingKidney) + extractScore("diabetesHypertension", formData.diabetesHypertension) +
+                       extractScore("jointBackPain", formData.jointBackPain);
+            maxRaw = 65;
+            break;
+
+        case "Mental & Emotional Wellbeing": // Section D
+            rawScore = extractScore("stressedAnxious", formData.stressedAnxious) + extractScore("sadnessBurnout", formData.sadnessBurnout) + extractScore("workLifeBalance", formData.workLifeBalance) + extractScore("relaxationCoping", formData.relaxationCoping);
+            maxRaw = 45;
+            break;
+
+        case "Preventive Health & Awareness": // Section E
+            rawScore = extractScore("lastCheckup", formData.lastCheckup) + extractScore("awarenessVitals", formData.awarenessVitals) + extractScore("vaccinations", formData.vaccinations);
+            maxRaw = 35;
+            break;
+
+        case "Sleep & Fatigue": // Section F
+            rawScore = extractScore("avgSleep", formData.avgSleep) + extractScore("daytimeTiredness", formData.daytimeTiredness) + extractScore("screenTimeBed", formData.screenTimeBed);
+            maxRaw = 25;
+            break;
+            
+        case "Digital & Social Wellness": // Section G
+            rawScore = extractScore("dailyScreenTime", formData.dailyScreenTime) + extractScore("offlineLeisure", formData.offlineLeisure) + extractScore("socialConnections", formData.socialConnections) + extractScore("digitalWLB", formData.digitalWLB);
+            maxRaw = 40;
+            break;
+    }
+
+    // Scale parameter raw score to a 10-point score
+    let score = (rawScore / maxRaw) * 10;
+    
+    return Math.round(Math.max(score, 0));
+}
+
+// Updated Overall Health Suggestion based on document meanings 
+function getOverallHealthSuggestion(score, riskStatus) {
+    if (riskStatus === "Low Risk") {
+        return [
+            "Healthy habits, maintain lifestyle & preventive care.",
+            "Continue your healthy habits and stay proactive with checkups.",
+            "Your score indicates a strong foundation for long-term health."
+        ];
+    } else if (riskStatus === "Moderate Risk") {
+        return [
+            "Some risk factors, consider targeted wellness interventions.",
+            "Focus on consistent physical activity and stress control to move to Low Risk.",
+            "Identify your weakest areas (in the table below) for small, consistent changes."
+        ];
+    } else if (riskStatus === "At Risk") {
+        return [
+            "Early warning, schedule preventive screenings & Nizcare programs.",
+            "Your responses indicate a need for immediate attention to lifestyle or stress concerns.",
+            "Book your annual preventive health checkup now and start targeted Nizcare programs."
+        ];
+    } else { // High Risk
+        return [
+            "Multiple risk factors; urgent attention and guided wellness plan recommended.",
+            "Seek medical advice immediately to manage and mitigate critical risks.",
+            "A detailed health check-up and a personalized, guided wellness plan are strongly recommended."
+        ];
+    }
+}
+
+// --- Generic Functions (No content change needed, just structural integrity) ---
 
 // Generate form fields dynamically (No change needed)
 function generateField(field) {
@@ -166,7 +371,6 @@ function generateField(field) {
                 <option value="">Select an option</option>
                 ${field.options.map(option => `<option value="${option}">${option}</option>`).join("")}
             </select>
-            ${field.id === "smoking" ? '' : ''}
         `;
     } else {
         return `
@@ -178,7 +382,6 @@ function generateField(field) {
 
 // Open, Next, Prev modal functions (No change needed)
 function openModal(id) {
-    // This function is now correctly loaded and defined before being called by the HTML
     let modal = new bootstrap.Modal(document.getElementById(id));
     document.querySelectorAll(".modal").forEach(m => {
         if (m.id !== id) {
@@ -241,9 +444,9 @@ function validateInputs(modalId) {
     return allFilled;
 }
 
-// Field Change Handler: Simplified, removing conditional smoking logic
+// Field Change Handler (No change needed)
 function handleFieldChange(id, value) {
-    // No action needed for the new HRA.docx structure as smoking is not conditional.
+    // Left empty as no conditional fields exist in the new HRA.
 }
 
 // Save form data (No change needed)
@@ -254,266 +457,74 @@ function saveData(modalId) {
     });
 }
 
-// --- 2. NEW WEIGHTED SCORING LOGIC (100 POINTS TOTAL) ---
-function calculateHealthScore() {
-    // 2.1. Define Max Raw Scores for Weight Scaling
-    const MAX_RAW_B = 18; // 6 questions * 3 points max 
-    const MAX_RAW_C = 15; // 5 questions * 3 points max 
-    const MAX_RAW_D = 15; // 5 questions * 3 points max 
-    const MAX_RAW_E = 9;  // 3 questions * 3 points max 
-    const MAX_RAW_F = 9;  // 3 questions * 3 points max 
-    
-    // 2.2. Calculate Raw Scores from Form Data (Section A is non-scoring)
-    
-    // B. Lifestyle & Habits (25%)
-    const rawScoreB = extractScore("exerciseFrequency", formData.exerciseFrequency) +
-                      extractScore("fruitsVeg", formData.fruitsVeg) +
-                      extractScore("processedFood", formData.processedFood) +
-                      extractScore("smoking", formData.smoking) +
-                      extractScore("alcohol", formData.alcohol) +
-                      extractScore("water", formData.water);
+// PDF Helper Functions (Keeping the generic structure)
 
-    // C. Physical Health & Chronic Risk (30%)
-    const rawScoreC = extractScore("bpSugar", formData.bpSugar) +
-                      extractScore("tired", formData.tired) +
-                      extractScore("waistCircumference", formData.waistCircumference) +
-                      extractScore("discomfort", formData.discomfort) +
-                      extractScore("doctorVisits", formData.doctorVisits);
-
-    // D. Mental & Emotional Wellbeing (25%)
-    const rawScoreD = extractScore("stressAnxious", formData.stressAnxious) +
-                      extractScore("workLifeBalance", formData.workLifeBalance) +
-                      extractScore("concentrateMotivated", formData.concentrateMotivated) +
-                      extractScore("sadnessBurnout", formData.sadnessBurnout) +
-                      extractScore("relaxationBreaks", formData.relaxationBreaks);
-
-    // E. Preventive Health & Awareness (10%)
-    const rawScoreE = extractScore("checkup12Months", formData.checkup12Months) +
-                      extractScore("awareVitals", formData.awareVitals) +
-                      extractScore("interestTips", formData.interestTips);
-
-    // F. Sleep & Fatigue (10%)
-    const rawScoreF = extractScore("sleepHours", formData.sleepHours) +
-                      extractScore("refreshed", formData.refreshed) +
-                      extractScore("screenTimeBed", formData.screenTimeBed);
-
-    // 2.3. Scale Raw Scores to 100-Point Total based on Weights 
-    let score = (rawScoreB / MAX_RAW_B * 25) +
-                (rawScoreC / MAX_RAW_C * 30) +
-                (rawScoreD / MAX_RAW_D * 25) +
-                (rawScoreE / MAX_RAW_E * 10) +
-                (rawScoreF / MAX_RAW_F * 10);
-
-    // Ensure score stays within 0-100 range and is an integer
-    score = Math.round(Math.max(0, Math.min(score, 100)));
-
-    // 2.4. Determine Risk Status based on ranges
-    let riskStatus;
-    if (score >= 81) {
-        riskStatus = "Excellent Health"; // 81–100 [cite: 61]
-    } else if (score >= 61) {
-        riskStatus = "Good / Moderate Health"; // 61–80 [cite: 61]
-    } else if (score >= 41) {
-        riskStatus = "At Risk"; // 41–60 [cite: 61]
-    } else {
-        riskStatus = "High Risk"; // 0–40 [cite: 61]
-    }
-
-    return { score, riskStatus };
-}
-
-// --- 3. UPDATED RISK CATEGORY HELPERS ---
-
-// Updated Risk Color to handle 4 categories
 function getRiskColor(riskLevel) {
     if (riskLevel === "High Risk") return [255, 0, 0]; // Red
     if (riskLevel === "At Risk") return [255, 165, 0]; // Orange
-    if (riskLevel === "Good / Moderate Health") return [255, 255, 0]; // Yellow
-    return [0, 128, 0]; // Green (Excellent Health)
+    if (riskLevel === "Moderate Risk") return [255, 255, 0]; // Yellow
+    return [0, 128, 0]; // Green (Low Risk)
 }
 
-function getRiskColor1(riskLevel) {
-    return [0, 0, 0];
-}
-
-function getHealthAreas() {
-    // New health areas based on HRA.docx sections B, C, D, E, F
-    const areas = {
-        "Lifestyle & Habits": "Lifestyle & Habits", // 25% [cite: 8]
-        "Physical Health & Chronic Risk": "Physical Health & Chronic Risk", // 30% [cite: 8]
-        "Mental & Emotional Wellbeing": "Mental & Emotional Wellbeing", // 25% [cite: 8]
-        "Preventive Health & Awareness": "Preventive Health & Awareness", // 10% [cite: 8]
-        "Sleep & Fatigue": "Sleep & Fatigue" // 10% [cite: 8]
-    };
-
-    function determineRisk(parameter) {
-        const paramScore = calculateParameterScore(parameter);
-        // Scaling a 10-point parameter score to 4 risk levels
-        if (paramScore <= 2) return "High Risk";
-        if (paramScore <= 4) return "At Risk";
-        if (paramScore <= 7) return "Good / Moderate Health";
-        return "Excellent Health";
-    }
-
-    return {
-        "Lifestyle & Habits": determineRisk(areas["Lifestyle & Habits"]),
-        "Physical Health & Chronic Risk": determineRisk(areas["Physical Health & Chronic Risk"]),
-        "Mental & Emotional Wellbeing": determineRisk(areas["Mental & Emotional Wellbeing"]),
-        "Preventive Health & Awareness": determineRisk(areas["Preventive Health & Awareness"]),
-        "Sleep & Fatigue": determineRisk(areas["Sleep & Fatigue"])
-    };
-}
-
-// Updated Parameter Score Logic (Max 10 points per area)
-function calculateParameterScore(parameter) {
-    let rawScore = 0;
-    let maxRaw = 1;
-
-    switch (parameter) {
-        // B. Lifestyle & Habits (Max Raw: 18)
-        case "Lifestyle & Habits":
-            rawScore = extractScore("exerciseFrequency", formData.exerciseFrequency) + extractScore("fruitsVeg", formData.fruitsVeg) + extractScore("processedFood", formData.processedFood) + extractScore("smoking", formData.smoking) + extractScore("alcohol", formData.alcohol) + extractScore("water", formData.water);
-            maxRaw = 18;
-            break;
-
-        // C. Physical Health & Chronic Risk (Max Raw: 15)
-        case "Physical Health & Chronic Risk":
-            rawScore = extractScore("bpSugar", formData.bpSugar) + extractScore("tired", formData.tired) + extractScore("waistCircumference", formData.waistCircumference) + extractScore("discomfort", formData.discomfort) + extractScore("doctorVisits", formData.doctorVisits);
-            maxRaw = 15;
-            break;
-
-        // D. Mental & Emotional Wellbeing (Max Raw: 15)
-        case "Mental & Emotional Wellbeing":
-            rawScore = extractScore("stressAnxious", formData.stressAnxious) + extractScore("workLifeBalance", formData.workLifeBalance) + extractScore("concentrateMotivated", formData.concentrateMotivated) + extractScore("sadnessBurnout", formData.sadnessBurnout) + extractScore("relaxationBreaks", formData.relaxationBreaks);
-            maxRaw = 15;
-            break;
-
-        // E. Preventive Health & Awareness (Max Raw: 9)
-        case "Preventive Health & Awareness":
-            rawScore = extractScore("checkup12Months", formData.checkup12Months) + extractScore("awareVitals", formData.awareVitals) + extractScore("interestTips", formData.interestTips);
-            maxRaw = 9;
-            break;
-        
-        // F. Sleep & Fatigue (Max Raw: 9)
-        case "Sleep & Fatigue":
-            rawScore = extractScore("sleepHours", formData.sleepHours) + extractScore("refreshed", formData.refreshed) + extractScore("screenTimeBed", formData.screenTimeBed);
-            maxRaw = 9;
-            break;
-    }
-
-    // Scale parameter raw score to a 10-point score
-    let score = (rawScore / maxRaw) * 10;
-    
-    // Ensure score doesn't go below 0
-    return Math.round(Math.max(score, 0));
-}
-
-// Updated Overall Health Suggestion (Matching HRA.docx ranges )
-function getOverallHealthSuggestion(score, riskStatus) {
-    if (riskStatus === "Excellent Health") {
-        return [
-            "You’re doing great! Continue your healthy habits.", // [cite: 61]
-            "Maintain regular checkups to stay on track.", // [cite: 61]
-            "Your health is your greatest asset—keep prioritizing it."
-        ];
-    } else if (riskStatus === "Good / Moderate Health") {
-        return [
-            "You’re doing well but have some improvement areas.", // [cite: 61]
-            "Focus on consistent physical activity and stress control.", // [cite: 61]
-            "Small, consistent changes can move you into the 'Excellent' category."
-        ];
-    } else if (riskStatus === "At Risk") {
-        return [
-            "Your responses indicate potential lifestyle or stress concerns.", // [cite: 61]
-            "Recommended to take preventive screening and wellness sessions.", // [cite: 61]
-            "Addressing these concerns now is crucial to prevent further health deterioration."
-        ];
-    } else { // High Risk
-        return [
-            "You’re showing signs of multiple health risks.", // [cite: 61]
-            "A detailed health check-up and personalized wellness plan are strongly recommended.", // [cite: 61]
-            "Seek medical advice immediately to manage and mitigate these risks."
-        ];
-    }
-}
-
-// --- 4. TEMPORARY STUB FUNCTIONS FOR RISK DETAILS ---
-// (Keeping the temporary content as the HRA.docx does not contain detailed suggestions)
-
+// Placeholders for detailed content (you should customize this content)
 function getRiskSubtitle(parameter, riskLevel) {
+    // Placeholders based on general health areas
     const subtitles = {
-        "Lifestyle & Habits": {
-            "Excellent Health": ["Affirmation:", "Your habits are a foundation for great health. Keep it up!"],
-            "Good / Moderate Health": ["Caution:", "Consistency is key. Focus on regular exercise and balanced eating."],
-            "At Risk": ["Warning:", "Your daily habits pose a risk. Prioritize exercise, diet, and water intake."],
-            "High Risk": ["Red Alert:", "Significant changes to diet, exercise, and substance use are immediately required."]
-        },
-        "Physical Health & Chronic Risk": {
-            "Excellent Health": ["Affirmation:", "You have a low risk of chronic conditions. Maintain annual checkups."],
-            "Good / Moderate Health": ["Caution:", "Monitor vital signs and be mindful of fatigue or discomfort."],
-            "At Risk": ["Warning:", "Your score indicates potential chronic risk factors. Consult a physician for screening."],
-            "High Risk": ["Red Alert:", "High likelihood of existing or developing chronic conditions. Urgent medical evaluation is needed."]
-        },
-        "Mental & Emotional Wellbeing": {
-            "Excellent Health": ["Affirmation:", "You manage stress effectively and maintain a healthy mindset."],
-            "Good / Moderate Health": ["Caution:", "Practice mindfulness and relaxation to prevent stress from escalating."],
-            "At Risk": ["Warning:", "Stress and motivation are concerning. Seek resources to improve work-life balance and focus."],
-            "High Risk": ["Red Alert:", "Severe stress or mental distress is indicated. Professional psychological support is critical."]
-        },
-        "Preventive Health & Awareness": {
-            "Excellent Health": ["Affirmation:", "You are proactive and aware of your health metrics. Stay vigilant."],
-            "Good / Moderate Health": ["Caution:", "Ensure you track key health numbers (BP, Sugar, BMI) regularly."],
-            "At Risk": ["Warning:", "Lack of recent checkups or awareness puts you at risk. Book a screening this year."],
-            "High Risk": ["Red Alert:", "Immediate health screening is mandatory. You are unaware of potential dangers."]
-        },
-        "Sleep & Fatigue": {
-            "Excellent Health": ["Affirmation:", "You achieve quality, restorative sleep nightly. This boosts all-around health."],
-            "Good / Moderate Health": ["Caution:", "Aim for 7-8 hours of consistent, quality rest. Reduce screen time near bedtime."],
-            "At Risk": ["Warning:", "Chronic poor sleep is impacting fatigue and health. Improve sleep hygiene immediately."],
-            "High Risk": ["Red Alert:", "Severe sleep deprivation is a major health risk. Address sleep patterns with professional help."]
-        }
+        "Lifestyle & Habits": { "Low Risk": ["Great job!", "Maintain your excellent activity and diet habits."], "Moderate Risk": ["Focus on Diet", "Increase fruit/veg and reduce processed food intake."], "At Risk": ["Urgent Change Needed", "Address tobacco/alcohol use and increase daily exercise."], "High Risk": ["Critical Risk", "Immediate intervention needed across all habits."] },
+        "Physical Health & NCD Risk": { "Low Risk": ["Excellent Screening", "Low risk for major NCDs. Maintain vigilance."], "Moderate Risk": ["Monitor Vitals", "Pay attention to any symptoms (thirst, pain) and schedule a checkup."], "At Risk": ["Screening Required", "High-risk factors present. Consult a doctor for targeted NCD screening (CVD, Diabetes)."], "High Risk": ["Immediate Medical Care", "Known high BP/Sugar or multiple severe symptoms require urgent specialist consultation."] },
+        "Mental & Emotional Wellbeing": { "Low Risk": ["Excellent Balance", "You cope well with stress. Keep up relaxation techniques."], "Moderate Risk": ["Need for Breaks", "Stress and balance are slipping. Prioritize time for relaxation and coping strategies."], "At Risk": ["Professional Support", "Persistent sadness or frequent anxiety is present. Seek professional counseling."], "High Risk": ["Crisis Point", "High distress/burnout indicated. Urgent mental health support is critical."] },
+        "Preventive Health & Awareness": { "Low Risk": ["Proactive Care", "You are aware of your vitals and up-to-date on checkups."], "Moderate Risk": ["Annual Checkup Due", "If >1 year since last checkup, schedule one immediately. Know your numbers."], "At Risk": ["High Unawareness", "Lack of recent checkups AND unawareness of vitals. Requires urgent screening."], "High Risk": ["Mandatory Screening", "No awareness and no checkups. Requires immediate comprehensive health screening."] },
+        "Sleep & Fatigue": { "Low Risk": ["Restorative Sleep", "Consistent 7-8 hours of quality sleep. This aids recovery."], "Moderate Risk": ["Improve Hygiene", "Sleep is inconsistent or tiredness is sometimes present. Reduce screen time before bed."], "At Risk": ["Chronic Fatigue", "Low average sleep and constant tiredness. Requires medical input for sleep quality."], "High Risk": ["Severe Sleep Debt", "Chronic sleep deprivation. Address underlying cause (stress/sleep disorder) immediately."] },
+        "Digital & Social Wellness": { "Low Risk": ["Balanced Life", "Low screen time, strong social and offline connections."], "Moderate Risk": ["Reduce Screen Time", "Cut back on non-work screen time and ensure one offline hobby per week."], "At Risk": ["Risk of Isolation", "High screen use and poor social connections. Actively seek social engagement and outdoor time."], "High Risk": ["Digital Overload", "Severe screen addiction/social isolation. Seek help to rebalance digital and real-world life."] }
     };
-    // Handles all 4 risk levels for all areas
     return subtitles[parameter][riskLevel] || ["No detailed subtitle available.", "Please consult the overall recommendations."];
 }
 
 function getDetailedSuggestions(parameter, riskLevel) {
+    // Detailed suggestions corresponding to the new health areas
     const suggestions = {
-        "Lifestyle & Habits": {
-            "Good / Moderate Health": ["• Incorporate 30 minutes of brisk activity 3 times a week.", "• Increase fruit and vegetable intake to 5 servings daily.", "• Limit alcohol to social occasions and avoid smoking."],
-            "At Risk": ["• Start a walking routine, 15 minutes per day.", "• Eliminate all sugary drinks and fried snacks.", "• Seek support for reducing or quitting tobacco/alcohol use."],
-            "High Risk": ["• Consult a health coach for a full lifestyle overhaul.", "• Enroll in a tobacco cessation program (if applicable).", "• Prioritize water intake (8+ glasses) and balanced meals immediately."]
+        "Lifestyle & Habits": { 
+            "Moderate Risk": ["• Aim for 3-4 days of 30-minute exercise per week.", "• Ensure 3-4 servings of fruits/vegetables daily.", "• Limit fried/processed food to once per week."], 
+            "At Risk": ["• Join a fitness program to ensure 1-2 days of exercise.", "• Eliminate daily tobacco/alcohol use.", "• Replace sodas/juice with water to hit 7-8 glasses."], 
+            "High Risk": ["• Seek formal counseling for substance use (if applicable).", "• Consult a dietitian for a full diet plan.", "• Start with 15 minutes of walking daily."] 
         },
-        "Physical Health & Chronic Risk": {
-            "Good / Moderate Health": ["• Learn to check your own blood pressure.", "• Monitor energy levels and report persistent fatigue to a doctor.", "• Maintain a moderate weight to reduce strain."],
-            "At Risk": ["• Get screened for diabetes and hypertension immediately.", "• Begin low-impact exercise to address discomfort.", "• Prioritize one doctor visit per year for a general checkup."],
-            "High Risk": ["• Urgent appointment with a specialist (Cardiologist/Endocrinologist).", "• Follow all medical advice regarding diet and medication strictly.", "• Take immediate action to reduce waist circumference and manage symptoms."]
+        "Physical Health & NCD Risk": {
+            "Moderate Risk": ["• Schedule a follow-up with your physician if you have symptoms like chest pain or thirst.", "• Track your BMI and waist circumference monthly.", "• Increase activity levels to manage weight and prevent NCDs."],
+            "At Risk": ["• Immediately book NCD risk screening for BP/Sugar/Cholesterol.", "• Consult a physiotherapist for persistent joint/back pain.", "• If you have existing conditions (Diabetes/HTN), ensure strict adherence to medication."],
+            "High Risk": ["• Urgent consultation with a cardiologist or endocrinologist is required.", "• Do not delay comprehensive diagnostic tests.", "• Implement all recommended lifestyle changes immediately to stabilize vitals."]
         },
         "Mental & Emotional Wellbeing": {
-            "Good / Moderate Health": ["• Dedicate 10 minutes daily to mindfulness or breathing exercises.", "• Set clear boundaries between work and personal time.", "• Connect with your support system weekly."],
-            "At Risk": ["• Seek basic counseling or peer support to discuss stress triggers.", "• Implement a digital detox one hour before sleep.", "• Develop a new, engaging hobby for relaxation."],
-            "High Risk": ["• Urgent referral to a mental health professional (psychologist/counselor).", "• Request flexible work arrangements or schedule changes to ease load.", "• Prioritize self-care over all non-essential commitments."]
+            "Moderate Risk": ["• Dedicate 10 minutes daily to mindfulness or deep breathing.", "• Set clear 'off-limits' times for work communication.", "• Engage in a hobby or activity you enjoy weekly for relaxation."],
+            "At Risk": ["• Contact NIZCARE for a mental wellness workshop.", "• Start a journal to track triggers for stress and sadness.", "• Schedule an initial consultation with a mental health professional."],
+            "High Risk": ["• Urgent referral for counseling/therapy is mandatory.", "• Communicate burnout/distress to HR/management for supportive changes.", "• Focus solely on self-care and recovery until stable."]
         },
         "Preventive Health & Awareness": {
-            "Good / Moderate Health": ["• Track your BMI and BP at home regularly.", "• Research common lifestyle diseases and their prevention.", "• Book a dental and vision checkup this year."],
-            "At Risk": ["• Schedule a full preventive health checkup within 3 months.", "• Understand the meaning of your key vital signs (BP, Sugar).", "• Opt-in for NIZCARE's wellness tips and consultations."],
-            "High Risk": ["• Do not delay; book a comprehensive health screening immediately.", "• Meet with a doctor to discuss personalized preventive steps.", "• Educate yourself on the risks associated with being unaware of your vitals."]
+            "Moderate Risk": ["• Book a full-body checkup within the next 3 months.", "• Keep a log of your BP, sugar, and cholesterol numbers.", "• Research recommended screenings (e.g., age-appropriate cancer screenings)."],
+            "At Risk": ["• Schedule your full health checkup immediately.", "• Take a basic health education session to understand key vital signs.", "• Ensure childhood vaccinations are up-to-date."],
+            "High Risk": ["• A comprehensive diagnostic panel is mandatory immediately.", "• Work with a health coach to track and interpret your vitals.", "• Do not postpone any preventive screenings."]
         },
         "Sleep & Fatigue": {
-            "Good / Moderate Health": ["• Turn off all screens 30 minutes before bed.", "• Ensure your bedroom is dark, quiet, and cool.", "• Establish a consistent sleep and wake time."],
-            "At Risk": ["• Avoid caffeine and heavy meals 3 hours before sleep.", "• Use a relaxation technique (e.g., progressive muscle relaxation) to aid sleep.", "• If refreshed quality is low, consult a doctor to rule out sleep disorders."],
-            "High Risk": ["• Seek consultation for chronic insomnia or persistent fatigue.", "• Eliminate screens in the bedroom entirely.", "• Address underlying stress or anxiety that is disrupting sleep."]
+            "Moderate Risk": ["• Ensure bedroom is cool, dark, and quiet.", "• Avoid caffeine and heavy meals close to bedtime.", "• Reduce screen time before bed to one hour."],
+            "At Risk": ["• Establish a consistent sleep schedule (even on weekends).", "• If daytime tiredness persists, consult a physician to rule out sleep disorders.", "• Practice relaxation techniques before sleep."],
+            "High Risk": ["• Seek specialist consultation for chronic sleep issues (insomnia, apnea).", "• Eliminate all screens and work-related materials from the bedroom.", "• Use the bedroom only for sleep (and intimacy)."]
+        },
+        "Digital & Social Wellness": {
+            "Moderate Risk": ["• Aim to spend less than 3 hours on non-work screens daily.", "• Schedule at least one hour of offline/outdoor leisure weekly.", "• Intentionally call or meet a friend/family member weekly."],
+            "At Risk": ["• Designate one evening per week as a 'no-screens' night.", "• Sign up for a group class or club to improve social connections.", "• Take short walks outdoors during the workday."],
+            "High Risk": ["• Implement a strict digital detox plan.", "• Seek support to address social anxiety or isolation.", "• Prioritize face-to-face interactions over digital communication."]
         }
     };
     
-    // Fallback to Moderate suggestions if the specific risk level text is missing
-    const levelKey = riskLevel === "Excellent Health" ? "Good / Moderate Health" : riskLevel;
+    const levelKey = riskLevel === "Low Risk" ? "Moderate Risk" : riskLevel;
 
     return suggestions[parameter][levelKey] || ["No specific suggestions available."];
 }
 
 
-// Remaining functions (generateSummaryTable, generateHealthRiskTable, generateRiskDetails, generatePDF) 
+// Function to Get Risk Color (No change needed)
+function getRiskColor1(riskLevel) {
+    return [0, 0, 0];
+}
 
 function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     doc.setFont("helvetica", "bold");
@@ -523,8 +534,8 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
 
+    // Only show Risk Status to the user, not the score.
     let summaryData = [
-        ["Overall Health Score", `${score}/100`],
         ["Risk Status", riskStatus],
     ];
 
@@ -597,11 +608,12 @@ function generateRiskDetails(doc, y, healthAreas) {
             doc.addPage();
             y = 20;
         }
+        
+        // Only showing Risk Level to the user in the detailed table
         doc.autoTable({
             startY: y,
             head: [["Metric", "Value"]],
             body: [
-                ["Risk Score", `${riskScore}/10`],
                 ["Risk Level", { content: riskLevel, styles: { textColor: riskColor } }]
             ],
             theme: "grid",
@@ -623,7 +635,7 @@ function generateRiskDetails(doc, y, healthAreas) {
         doc.text(lines, 14, y);
         y += lines.length * 6 + 10;
 
-        if (riskLevel !== "Excellent Health") {
+        if (riskLevel !== "Low Risk") { // Changed from Excellent Health to Low Risk
             if (y > doc.internal.pageSize.height - 50) {
                 doc.addPage();
                 y = 20;
@@ -686,7 +698,8 @@ function generatePDF() {
         doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" });
 
         let y = 45;
-        y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y);
+        // Fix: Passing score to generateSummaryTable so it's available for debugging/future use, but it's not displayed
+        y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y); 
         y = generateHealthRiskTable(doc, y, healthAreas);
 
         doc.addPage();
@@ -699,12 +712,9 @@ function generatePDF() {
     // Set the onload handler to generate the content
     logo.onload = generateContent;
 
-    // *** FIX: Prevent immediate call if image is already cached/complete ***
-    // Only call generateContent directly if the image is already loaded,
-    // otherwise, the onload handler will take care of it.
+    // FIX: Prevent double PDF generation if image is already cached
     if (logo.complete) {
-        // Remove the handler to prevent a potential double-call scenario
-        logo.onload = null; 
-        generateContent();
+        logo.onload = null; // Remove the handler
+        generateContent(); // Call directly
     }
 }
