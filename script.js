@@ -415,7 +415,7 @@ function saveData(modalId) {
 function getRiskColor(riskLevel) {
     if (riskLevel === "High Risk") return [255, 0, 0]; // Red
     if (riskLevel === "At Risk") return [255, 128, 0]; // Orange
-    if (riskLevel === "Moderate Risk") return [255, 255, 0]; // Yellow
+    if (riskLevel === "Moderate Risk") return [255, 215, 0]; // Yellow
     return [0, 255, 0]; // Green (Low Risk)
 }
 
@@ -511,10 +511,12 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     let y = doc.autoTable.previous.finalY + 10;
 
     doc.setFont("calibri", "bold");
+    doc.setFontSize(14);
     doc.text("Overall Health Suggestions:", 14, y);
     y += 6;
 
     doc.setFont("calibri", "normal");
+    doc.setFontSize(12);
     overallHealthSuggestion.forEach((suggestion) => {
         doc.text(`• ${suggestion}`, 14, y);
         y += 6;
@@ -527,6 +529,7 @@ function generateHealthRiskTable(doc, y, healthAreas) {
     const ACCENT_COLOR = [44, 62, 80];
 
     doc.setFont("calibri", "bold");
+    doc.setFontSize(14);
     doc.text("Health Area Risk Levels", 105, y, { align: "center" });
 
     y += 8;
@@ -647,6 +650,7 @@ function generatePDF() {
         return;
     }
 
+    // Ensure final modal data is saved before calculation
     saveData("modal5"); 
 
     const currentDate = new Date().toLocaleDateString();
@@ -656,8 +660,10 @@ function generatePDF() {
     const healthAreas = getHealthAreas();
 
     const logo = new Image();
+    // Assuming your logo is named 'logo.png'
     logo.src = "logo.png";
 
+    // This function contains ALL the PDF drawing logic
     const generateContent = function () {
         // Set document header font and colors
         doc.setFont("calibri", "bold");
@@ -688,9 +694,11 @@ function generatePDF() {
         doc.save("NIZCARE_Health_Scorecard.pdf");
     };
 
-    logo.onload = generateContent;
-
+    // FIX: Conditional execution to prevent double PDF generation when image is cached.
+    // We check if the image is already complete (cached).
     if (logo.complete) {
-        logo.onload();
+        generateContent(); // Execute immediately if complete
+    } else {
+        logo.onload = generateContent; // Wait for the load event otherwise
     }
 }
