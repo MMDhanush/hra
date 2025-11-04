@@ -119,9 +119,10 @@ const sections = [
 let formData = {};
 const modalContainer = document.getElementById("modals-container");
 
+// --- MODAL GENERATION ---
 sections.forEach((section, index) => {
     let modalHTML = `
-        <div id="${section.id}" class="modal fade" tabindex="-1" inert>
+        <div id="${section.id}" class="modal fade" tabindex="-1">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -142,7 +143,7 @@ sections.forEach((section, index) => {
     modalContainer.innerHTML += modalHTML;
 });
 
-// --- CORE SCORING LOGIC & CALCULATIONS ---
+// --- CORE SCORING LOGIC & CALCULATIONS (Unchanged for brevity) ---
 
 // Helper function to extract the score number from the option string
 function extractScore(value) {
@@ -151,43 +152,39 @@ function extractScore(value) {
     return match ? parseInt(match[1]) : 0;
 }
 
-// Request 4: New function to calculate BMI score
+// Function to calculate BMI score
 function calculateBMI() {
     const H = parseFloat(formData.height_cm);
     const W = parseFloat(formData.weight_kg);
     
-    // Check for valid inputs
     if (isNaN(H) || H <= 0 || isNaN(W) || W <= 0) {
         return { score: 0, bmi: 0, risk: "High Risk - Data Missing" };
     }
 
-    // BMI Formula: kg / (m*m)
     const BMI = W / ((H / 100) * (H / 100));
     const roundedBMI = Math.round(BMI * 10) / 10;
     let score = 0;
     let risk = "";
 
-    // Scoring: Normal BMI (18.5–24.9) gets 5 points, all others get 0 
     if (BMI >= 18.5 && BMI <= 24.9) {
         score = 5;
         risk = "Low Risk - Healthy Weight";
     } else if (BMI < 18.5) {
-        score = 0; // Underweight
+        score = 0; 
         risk = "At Risk - Underweight";
     } else if (BMI >= 25 && BMI <= 29.9) {
-        score = 0; // Overweight
+        score = 0; 
         risk = "Moderate Risk - Overweight";
-    } else { // BMI >= 30
-        score = 0; // Obese
+    } else { 
+        score = 0; 
         risk = "High Risk - Obese";
     }
 
     return { score, bmi: roundedBMI, risk };
 }
 
-// Request 2 & 3: Detailed NCD Risk Assessment
+// Detailed NCD Risk Assessment (Used by recommendations, but table is removed)
 function getNCDsDetailedRisk() {
-    // Scoring logic for risk determination (simplified to 3 levels: Low, Moderate, High)
     const riskMap = (rawScore, maxScore) => {
         const percentage = (rawScore / maxScore) * 100;
         if (percentage >= 80) return "Low Risk";
@@ -196,18 +193,15 @@ function getNCDsDetailedRisk() {
     };
 
     const bmiResult = calculateBMI();
-    const bmiScore = bmiResult.score; // 5 points if normal, 0 otherwise
+    const bmiScore = bmiResult.score; 
 
-    // Sub-Area Scores (Max Raw Score is based on points in sections)
-    
     // CVD Risk (Max 13: 5(BP)+5(Chest Pain)+3(FH))
     const cvdRaw = extractScore(formData.bpDiagnosis) + extractScore(formData.chestPain) + extractScore(formData.cvdFamilyHistory);
     // Diabetes Risk (Max 13: 5(Sugar)+5(Symptoms)+3(FH))
     const diabetesRaw = extractScore(formData.sugarDiagnosis) + extractScore(formData.excessiveThirst) + extractScore(formData.diabetesFamilyHistory);
-    // Obesity/Metabolic Risk (Max 10: 5 for waist + 5 for BMI)
+    // Obesity & Metabolic Risk (Max 10: 5 for waist + 5 for BMI)
     const metabolicRaw = extractScore(formData.waistCircumference) + bmiScore;
 
-    // Report only on the key high-risk NCDs as requested (Diabetes, CVD, Obesity)
     return {
         "CVD Risk (Heart)": {
             score: cvdRaw,
@@ -235,54 +229,21 @@ function calculateHealthScore() {
     const MAX_RAW_D = 45; 
     const MAX_RAW_E = 35; 
     const MAX_RAW_F = 25; 
-    const MAX_RAW_C = 65; // Total C remains 65 
-    const MAX_RAW_G = 40; // Max score for Digital & Social Wellness 
+    const MAX_RAW_C = 65; 
+    const MAX_RAW_G = 40; 
 
-    // Calculate BMI score (Request 4)
     const bmiResult = calculateBMI();
     const bmiScore = bmiResult.score;
 
-    // 2.2. Calculate Raw Scores
-    // B. Lifestyle & Habits (20%)
-    const rawScoreB = extractScore(formData.exercise) +
-                      extractScore(formData.fruitsVeg) +
-                      extractScore(formData.processedFood) +
-                      extractScore(formData.tobaccoAlcohol) +
-                      extractScore(formData.water);
+    // Calculate Raw Scores
+    const rawScoreB = extractScore(formData.exercise) + extractScore(formData.fruitsVeg) + extractScore(formData.processedFood) + extractScore(formData.tobaccoAlcohol) + extractScore(formData.water);
+    const rawScoreC = extractScore(formData.bpDiagnosis) + extractScore(formData.chestPain) + extractScore(formData.cvdFamilyHistory) + extractScore(formData.sugarDiagnosis) + extractScore(formData.excessiveThirst) + extractScore(formData.diabetesFamilyHistory) + extractScore(formData.waistCircumference) + bmiScore + extractScore(formData.asthmaCOPD) + extractScore(formData.smokeExposure) + extractScore(formData.cancerAwareness) + extractScore(formData.cancerFamilyHistory) + extractScore(formData.swellingKidney) + extractScore(formData.diabetesHypertension) + extractScore(formData.jointBackPain);
+    const rawScoreD = extractScore(formData.stressedAnxious) + extractScore(formData.sadnessBurnout) + extractScore(formData.workLifeBalance) + extractScore(formData.relaxationCoping);
+    const rawScoreE = extractScore(formData.lastCheckup) + extractScore(formData.awarenessVitals) + extractScore(formData.vaccinations);
+    const rawScoreF = extractScore(formData.avgSleep) + extractScore(formData.daytimeTiredness) + extractScore(formData.screenTimeBed);
+    const rawScoreG = extractScore(formData.dailyScreenTime) + extractScore(formData.offlineLeisure) + extractScore(formData.socialConnections) + extractScore(formData.digitalWLB);
 
-    // C. Physical Health & NCD Risk (30%) - Incorporates calculated BMI score
-    const rawScoreC = extractScore(formData.bpDiagnosis) + extractScore(formData.chestPain) + extractScore(formData.cvdFamilyHistory) +
-                      extractScore(formData.sugarDiagnosis) + extractScore(formData.excessiveThirst) + extractScore(formData.diabetesFamilyHistory) +
-                      extractScore(formData.waistCircumference) + bmiScore + 
-                      extractScore(formData.asthmaCOPD) + extractScore(formData.smokeExposure) +
-                      extractScore(formData.cancerAwareness) + extractScore(formData.cancerFamilyHistory) +
-                      extractScore(formData.swellingKidney) + extractScore(formData.diabetesHypertension) +
-                      extractScore(formData.jointBackPain);
-
-    // D. Mental & Emotional Wellbeing (15%)
-    const rawScoreD = extractScore(formData.stressedAnxious) +
-                      extractScore(formData.sadnessBurnout) +
-                      extractScore(formData.workLifeBalance) +
-                      extractScore(formData.relaxationCoping);
-    
-    // E. Preventive Health & Awareness (10%)
-    const rawScoreE = extractScore(formData.lastCheckup) +
-                      extractScore(formData.awarenessVitals) +
-                      extractScore(formData.vaccinations);
-    
-    // F. Sleep & Fatigue (10%)
-    const rawScoreF = extractScore(formData.avgSleep) +
-                      extractScore(formData.daytimeTiredness) +
-                      extractScore(formData.screenTimeBed);
-
-    // G. Digital & Social Wellness (15%) - Note: The total weight is 15 for G, and 10 for E and F each, totaling 100%.
-    const rawScoreG = extractScore(formData.dailyScreenTime) +
-                      extractScore(formData.offlineLeisure) +
-                      extractScore(formData.socialConnections) +
-                      extractScore(formData.digitalWLB);
-
-    // 2.3. Scale Raw Scores to 100-Point Total based on Weights
-    // Weights: B(20), C(30), D(15), E(10), F(10), G(15) -> Total 100
+    // Scale Raw Scores to 100-Point Total based on Weights: B(20), C(30), D(15), E(10), F(10), G(15)
     let score = (rawScoreB / MAX_RAW_B * 20) +
                 (rawScoreC / MAX_RAW_C * 30) +
                 (rawScoreD / MAX_RAW_D * 15) +
@@ -290,25 +251,65 @@ function calculateHealthScore() {
                 (rawScoreF / MAX_RAW_F * 10) +
                 (rawScoreG / MAX_RAW_G * 15);
 
-    // Ensure score stays within 0-100 range and is an integer
     score = Math.round(Math.max(0, Math.min(score, 100)));
 
-    // 2.4. Determine Risk Status 
     let riskStatus;
     if (score >= 81) {
-        riskStatus = "Low Risk"; // 81–100
+        riskStatus = "Low Risk"; 
     } else if (score >= 61) {
-        riskStatus = "Moderate Risk"; // 61–80
+        riskStatus = "Moderate Risk"; 
     } else if (score >= 41) {
-        riskStatus = "At Risk"; // 41–60
+        riskStatus = "At Risk"; 
     } else {
-        riskStatus = "High Risk"; // 0–40
+        riskStatus = "High Risk"; 
     }
 
     return { score, riskStatus };
 }
 
-// --- Parameter Score Logic and Helpers ---
+// --- Parameter Score Logic and Helpers (omitted for brevity) ---
+
+function calculateParameterScore(parameter) {
+    let rawScore = 0;
+    let maxRaw = 1;
+    const bmiResult = calculateBMI();
+    const bmiScore = bmiResult.score;
+
+    switch (parameter) {
+        case "Lifestyle & Habits":
+            rawScore = extractScore(formData.exercise) + extractScore(formData.fruitsVeg) + extractScore(formData.processedFood) + extractScore(formData.tobaccoAlcohol) + extractScore(formData.water);
+            maxRaw = 50;
+            break;
+        case "Physical Health & NCD Risk":
+            rawScore = extractScore(formData.bpDiagnosis) + extractScore(formData.chestPain) + extractScore(formData.cvdFamilyHistory) +
+                       extractScore(formData.sugarDiagnosis) + extractScore(formData.excessiveThirst) + extractScore(formData.diabetesFamilyHistory) +
+                       extractScore(formData.waistCircumference) + bmiScore + 
+                       extractScore(formData.asthmaCOPD) + extractScore(formData.smokeExposure) +
+                       extractScore(formData.cancerAwareness) + extractScore(formData.cancerFamilyHistory) +
+                       extractScore(formData.swellingKidney) + extractScore(formData.diabetesHypertension) +
+                       extractScore(formData.jointBackPain);
+            maxRaw = 65;
+            break;
+        case "Mental & Emotional Wellbeing":
+            rawScore = extractScore(formData.stressedAnxious) + extractScore(formData.sadnessBurnout) + extractScore(formData.workLifeBalance) + extractScore(formData.relaxationCoping);
+            maxRaw = 45;
+            break;
+        case "Preventive Health & Awareness":
+            rawScore = extractScore(formData.lastCheckup) + extractScore(formData.awarenessVitals) + extractScore(formData.vaccinations);
+            maxRaw = 35;
+            break;
+        case "Sleep & Fatigue":
+            rawScore = extractScore(formData.avgSleep) + extractScore(formData.daytimeTiredness) + extractScore(formData.screenTimeBed);
+            maxRaw = 25;
+            break;
+        case "Digital & Social Wellness":
+            rawScore = extractScore(formData.dailyScreenTime) + extractScore(formData.offlineLeisure) + extractScore(formData.socialConnections) + extractScore(formData.digitalWLB);
+            maxRaw = 40;
+            break;
+    }
+
+    return Math.round((rawScore / maxRaw) * 10);
+}
 
 function getHealthAreas() {
     const areas = {
@@ -338,70 +339,20 @@ function getHealthAreas() {
     };
 }
 
-function calculateParameterScore(parameter) {
-    let rawScore = 0;
-    let maxRaw = 1;
-    const bmiResult = calculateBMI();
-    const bmiScore = bmiResult.score;
 
-    switch (parameter) {
-        case "Lifestyle & Habits": 
-            rawScore = extractScore(formData.exercise) + extractScore(formData.fruitsVeg) + extractScore(formData.processedFood) + extractScore(formData.tobaccoAlcohol) + extractScore(formData.water);
-            maxRaw = 50;
-            break;
-
-        case "Physical Health & NCD Risk": 
-            rawScore = extractScore(formData.bpDiagnosis) + extractScore(formData.chestPain) + extractScore(formData.cvdFamilyHistory) +
-                       extractScore(formData.sugarDiagnosis) + extractScore(formData.excessiveThirst) + extractScore(formData.diabetesFamilyHistory) +
-                       extractScore(formData.waistCircumference) + bmiScore + 
-                       extractScore(formData.asthmaCOPD) + extractScore(formData.smokeExposure) +
-                       extractScore(formData.cancerAwareness) + extractScore(formData.cancerFamilyHistory) +
-                       extractScore(formData.swellingKidney) + extractScore(formData.diabetesHypertension) +
-                       extractScore(formData.jointBackPain);
-            maxRaw = 65;
-            break;
-
-        case "Mental & Emotional Wellbeing": 
-            rawScore = extractScore(formData.stressedAnxious) + extractScore(formData.sadnessBurnout) + extractScore(formData.workLifeBalance) + extractScore(formData.relaxationCoping);
-            maxRaw = 45;
-            break;
-
-        case "Preventive Health & Awareness": 
-            rawScore = extractScore(formData.lastCheckup) + extractScore(formData.awarenessVitals) + extractScore(formData.vaccinations);
-            maxRaw = 35;
-            break;
-
-        case "Sleep & Fatigue": 
-            rawScore = extractScore(formData.avgSleep) + extractScore(formData.daytimeTiredness) + extractScore(formData.screenTimeBed);
-            maxRaw = 25;
-            break;
-            
-        case "Digital & Social Wellness": 
-            rawScore = extractScore(formData.dailyScreenTime) + extractScore(formData.offlineLeisure) + extractScore(formData.socialConnections) + extractScore(formData.digitalWLB);
-            maxRaw = 40;
-            break;
-        default:
-             return 0;
-    }
-
-    // Scale parameter raw score to a 10-point score
-    let score = (rawScore / maxRaw) * 10;
-    
-    return Math.round(Math.max(score, 0));
-}
-
+// --- SUGGESTIONS LOGIC (omitted for brevity) ---
 function getOverallHealthSuggestion(score, riskStatus) {
     if (riskStatus === "Low Risk") {
         return [
-            "Healthy habits, maintain lifestyle & preventive care.",
-            "Continue your healthy habits and stay proactive with checkups.",
-            "Your score indicates a strong foundation for long-term health."
+            "Excellent Health! Continue your healthy habits and maintain regular checkups to stay on track.",
+            "Your score indicates optimal wellbeing. Keep focusing on stress management and activity consistency.",
+            "Congratulations on your low-risk status. Share your success and motivate others."
         ];
     } else if (riskStatus === "Moderate Risk") {
         return [
             "Some risk factors, consider targeted wellness interventions.",
             "Focus on consistent physical activity and stress control to move to Low Risk.",
-            "Identify your weakest areas (in the table below) for small, consistent changes."
+            "Identify your weakest areas for small, consistent changes."
         ];
     } else if (riskStatus === "At Risk") {
         return [
@@ -418,284 +369,184 @@ function getOverallHealthSuggestion(score, riskStatus) {
     }
 }
 
-// --- Generic Functions & Field Generation ---
-
-function generateField(field) {
-    if (field.type === "select") {
-        const optionsHTML = field.options.map(option => {
-            const cleanText = option.replace(/\s*\([^)]+\)$/, ''); 
-            return `<option value="${option}">${cleanText}</option>`;
-        }).join("");
-
-        return `
-            <div class="mb-3">
-                <label class="form-label">${field.label}</label>
-                <select id="${field.id}" class="form-select" onchange="handleFieldChange('${field.id}', this.value)">
-                    <option value="">Select an option</option>
-                    ${optionsHTML}
-                </select>
-            </div>
-        `;
-    } 
-    else if (field.type === "multicheckbox") { // Request 7
-        const checkboxesHTML = field.options.map((option, index) => {
-            const safeId = `${field.id}_${index}`;
-            return `
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="${option}" id="${safeId}" name="${field.id}">
-                    <label class="form-check-label" for="${safeId}">
-                        ${option}
-                    </label>
-                </div>
-            `;
-        }).join("");
-
-        return `
-            <div class="mb-3">
-                <label class="form-label">${field.label}</label>
-                <div id="${field.id}_group">
-                    ${checkboxesHTML}
-                </div>
-            </div>
-        `;
-    }
-    else {
-        return `
-            <div class="mb-3">
-                <label class="form-label">${field.label}</label>
-                <input type="${field.type}" id="${field.id}" class="form-control" placeholder="${field.type === 'number' ? 'Enter in numeric format' : ''}">
-            </div>
-        `;
-    }
+function getRiskColor(risk) {
+    if (risk.includes("Low")) return [34, 139, 34]; // Forest Green
+    if (risk.includes("Moderate")) return [255, 165, 0]; // Orange
+    if (risk.includes("At Risk") || risk.includes("Overweight")) return [255, 69, 0]; // Red-Orange
+    if (risk.includes("High") || risk.includes("Obese")) return [255, 0, 0]; // Red
+    return [100, 100, 100]; // Gray
 }
 
-function openModal(id) {
-    if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
-        console.error("Bootstrap or its Modal component is not loaded.");
-        return;
-    }
-    let modal = new bootstrap.Modal(document.getElementById(id));
-    document.querySelectorAll(".modal").forEach(m => {
-        if (m.id !== id) {
-            m.setAttribute("inert", "");
-        } else {
-            m.removeAttribute("inert");
-        }
-    });
-    modal.show();
-}
-
-function nextModal(currentId, nextId) {
-    saveData(currentId);
-    document.activeElement.blur();
-    let currentModal = bootstrap.Modal.getInstance(document.getElementById(currentId));
-    currentModal.hide();
-    openModal(nextId);
-}
-
-function prevModal(currentId, prevId) {
-    document.activeElement.blur();
-    let currentModal = bootstrap.Modal.getInstance(document.getElementById(currentId));
-    currentModal.hide();
-    openModal(prevId);
-}
-
-function validateAndNext(currentId, nextId) {
-    if (validateInputs(currentId)) {
-        nextModal(currentId, nextId);
-    }
-}
-
-function validateAndGeneratePDF() {
-    if (!validateInputs("modal5")) {
-        alert("Please fill out all required fields before generating the report.");
-        return;
-    }
-    saveData("modal5");
-    generatePDF();
-}
-
-function validateInputs(modalId) {
-    let allFilled = true;
-    
-    // Validate standard inputs (select, text, number)
-    let inputs = document.querySelectorAll(`#${modalId} input:not([type="checkbox"]), #${modalId} select`);
-    inputs.forEach(input => {
-        if ((input.type === "select-one" && input.value.trim() === "") || (input.type !== "select-one" && !input.value.trim())) {
-            if (input.id !== "familyHistoryNCDs_group") {
-                input.classList.add("is-invalid");
-                allFilled = false;
-            }
-        } else {
-            input.classList.remove("is-invalid");
-        }
-    });
-
-    // Specific check for Height, Weight, Age, Service Length to ensure they are positive numbers
-    if (modalId === "modal1") {
-        const fieldsToCheck = ["height_cm", "weight_kg", "age", "serviceLength"];
-        fieldsToCheck.forEach(id => {
-            const inputElement = document.getElementById(id);
-            const value = parseFloat(inputElement.value);
-
-            // Special handling for Service Length (can be 0 or 1.5 etc.)
-            const isServiceLength = id === "serviceLength";
-            
-            if (isNaN(value) || (isServiceLength ? value < 0 : value <= 0)) {
-                inputElement.classList.add("is-invalid");
-                allFilled = false;
-            } else {
-                inputElement.classList.remove("is-invalid");
-            }
-        });
-    }
-
-    return allFilled;
-}
-
-function handleFieldChange(id, value) {
-    formData[id] = value.trim();
-}
-
-function saveData(modalId) {
-    let inputs = document.querySelectorAll(`#${modalId} input, #${modalId} select`);
-    inputs.forEach(input => {
-        if (input.type === "checkbox") {
-            // Handle multi-select checkboxes (Request 7)
-            const fieldId = input.name;
-            if (!formData[fieldId]) {
-                formData[fieldId] = [];
-            }
-            if (input.checked) {
-                if (!formData[fieldId].includes(input.value)) {
-                    formData[fieldId].push(input.value);
-                }
-            } else {
-                 formData[fieldId] = formData[fieldId].filter(val => val !== input.value);
-            }
-        } else {
-            // Handle standard inputs
-            formData[input.id] = input.value.trim();
-        }
-    });
-}
-
-// --- PDF Helper Functions (Keep only getRiskColor and Detailed Suggestions/Subtitles) ---
-
-function getRiskColor(riskLevel) {
-    if (riskLevel.includes("High Risk") || riskLevel.includes("Obese")) return [255, 0, 0]; // Red
-    if (riskLevel.includes("At Risk") || riskLevel.includes("Underweight")) return [255, 128, 0]; // Orange
-    if (riskLevel.includes("Moderate Risk") || riskLevel.includes("Overweight")) return [139, 128, 0]; // Yellow
-    return [0, 128, 0]; // Darker Green for Low Risk
-}
-
-function getRiskSubtitle(parameter, riskLevel) {
+function getDetailedRiskSubtitle(parameter, riskLevel) {
     const subtitles = {
-        "Lifestyle & Habits": { "Low Risk": ["Great job!", "Maintain your excellent activity and diet habits."], "Moderate Risk": ["Focus on Diet", "Increase fruit/veg and reduce processed food intake."], "At Risk": ["Urgent Change Needed", "Address tobacco/alcohol use and increase daily exercise."], "High Risk": ["Critical Risk", "Immediate intervention needed across all habits."] },
-        "Physical Health & NCD Risk": { "Low Risk": ["Excellent Screening", "Low risk for major NCDs. Maintain vigilance."], "Moderate Risk": ["Monitor Vitals", "Pay attention to any symptoms (thirst, pain) and schedule a checkup."], "At Risk": ["Screening Required", "High-risk factors present. Consult a doctor for targeted NCD screening (CVDs (Heart Diseases), Diabetes)."], "High Risk": ["Immediate Medical Care", "Known high BP/Sugar or multiple severe symptoms require urgent specialist consultation."] },
-        "Mental & Emotional Wellbeing": { "Low Risk": ["Excellent Balance", "You cope well with stress. Keep up relaxation techniques."], "Moderate Risk": ["Need for Breaks", "Stress and balance are slipping. Prioritize time for relaxation and coping strategies."], "At Risk": ["Professional Support", "Persistent sadness or frequent anxiety is present. Seek professional counseling."], "High Risk": ["Crisis Point", "High distress/burnout indicated. Urgent mental health support is critical."] },
-        "Preventive Health & Awareness": { "Low Risk": ["Proactive Care", "You are aware of your vitals and up-to-date on checkups."], "Moderate Risk": ["Annual Checkup Due", "If >1 year since last checkup, schedule one immediately. Know your numbers."], "At Risk": ["High Unawareness", "Lack of recent checkups AND unawareness of vitals. Requires urgent screening."], "High Risk": ["Mandatory Screening", "No awareness and no checkups. Requires immediate comprehensive health screening."] },
-        "Sleep & Fatigue": { "Low Risk": ["Restorative Sleep", "Consistent 7-8 hours of quality sleep. This aids recovery."], "Moderate Risk": ["Improve Hygiene", "Sleep is inconsistent or tiredness is sometimes present. Reduce screen time before bed."], "At Risk": ["Chronic Fatigue", "Low average sleep and constant tiredness. Requires medical input for sleep quality."], "High Risk": ["Severe Sleep Debt", "Chronic sleep deprivation. Address underlying cause (stress/sleep disorder) immediately."] },
-        "Digital & Social Wellness": { "Low Risk": ["Balanced Life", "Low screen time, strong social and offline connections."], "Moderate Risk": ["Reduce Screen Time", "Cut back on non-work screen time and ensure one offline hobby per week."], "At Risk": ["Risk of Isolation", "High screen use and poor social connections. Actively seek social engagement and outdoor time."], "High Risk": ["Digital Overload", "Severe screen addiction/social isolation. Seek help to rebalance digital and real-world life."] },
-        
-        // Detailed NCD Risk Subtitles
-        "CVD Risk (Heart)": { "Low Risk": ["On Track", "Your current lifestyle and medical responses indicate a low risk for this condition. Maintain vigilance."], "Moderate Risk": ["Monitor Closely", "Minor risk factors identified. Schedule a screening test (e.g., BP/Cholesterol) for baseline data."], "High Risk": ["URGENT INTERVENTION", "Known diagnosis or multiple severe symptoms/high-risk factors. Seek immediate medical attention."] },
-        "Diabetes Risk": { "Low Risk": ["On Track", "Your current lifestyle and medical responses indicate a low risk for this condition. Maintain vigilance."], "Moderate Risk": ["Monitor Closely", "Minor risk factors identified. Schedule a blood sugar (HbA1c) test for baseline data."], "High Risk": ["URGENT INTERVENTION", "Known diagnosis or multiple severe symptoms/high-risk factors. Seek immediate medical attention."] },
-        "Obesity / Metabolic Syndrome": { "Low Risk": ["On Track", "Your BMI is in the healthy range. Focus on maintaining muscle mass and core health."], "Moderate Risk": ["Monitor Closely", "Risk factors (like high BMI or waist circumference) identified. Focus on increasing activity and healthy eating."], "High Risk": ["URGENT INTERVENTION", "High BMI and/or high waist circumference. Consult a dietitian and physician for a personalized metabolic plan."] },
+        "CVD Risk (Heart)": { 
+            "Low Risk": ["On Track", "Your current lifestyle and medical responses indicate a low risk for this condition. Maintain vigilance."], 
+            "Moderate Risk": ["Monitor Closely", "Minor risk factors identified. Schedule BP and Cholesterol check if not done recently."],
+            "High Risk": ["URGENT INTERVENTION", "Known diagnosis or multiple severe symptoms/high-risk factors. Seek immediate medical attention."] 
+        },
+        "Diabetes Risk": { 
+            "Low Risk": ["On Track", "Your current lifestyle and medical responses indicate a low risk for this condition. Maintain vigilance."], 
+            "Moderate Risk": ["Monitor Closely", "Minor risk factors identified. Schedule a blood sugar (HbA1c) test for baseline data."], 
+            "High Risk": ["URGENT INTERVENTION", "Known diagnosis or multiple severe symptoms/high-risk factors. Seek immediate medical attention."] 
+        },
+        "Obesity / Metabolic Syndrome": { 
+            "Low Risk": ["On Track", "Your BMI is in the healthy range. Focus on maintaining muscle mass and core health."], 
+            "Moderate Risk": ["Monitor Closely", "Risk factors (like high BMI or waist circumference) identified. Focus on increasing activity and healthy eating."], 
+            "High Risk": ["URGENT INTERVENTION", "High BMI and/or high waist circumference. Consult a dietitian and physician for a personalized metabolic plan."] 
+        },
+        "Physical Health & NCD Risk": { 
+            "Low Risk": ["Proactive Care", "Good awareness of your body and vital signs. Keep up the good work."], 
+            "Moderate Risk": ["Monitor Vitals", "Pay attention to any symptoms (thirst, pain) and schedule a checkup."], 
+            "At Risk": ["Screening Required", "High-risk factors present. Consult a a doctor for targeted NCD screening (CVDs (Heart Diseases), Diabetes)."], 
+            "High Risk": ["Immediate Medical Care", "Known high BP/Sugar or multiple severe symptoms require urgent specialist consultation."] 
+        },
+        "Mental & Emotional Wellbeing": { 
+            "Low Risk": ["Excellent Balance", "You cope well with stress. Keep up relaxation techniques."], 
+            "Moderate Risk": ["Need for Breaks", "Stress and balance are slipping. Prioritize time for relaxation and coping strategies."], 
+            "At Risk": ["Professional Support", "Persistent sadness or frequent anxiety is present. Seek professional counseling."], 
+            "High Risk": ["Crisis Point", "High distress/burnout indicated. Urgent mental health support is critical."] 
+        },
+        "Preventive Health & Awareness": { 
+            "Low Risk": ["Proactive Care", "You are aware of your vitals and up-to-date on checkups."], 
+            "Moderate Risk": ["Annual Checkup Due", "If >1 year since last checkup, schedule one immediately. Know your numbers."], 
+            "At Risk": ["High Unawareness", "Lack of recent checkups AND unawareness of vitals. Requires urgent screening."], 
+            "High Risk": ["Mandatory Screening", "No awareness and no checkups. Requires immediate comprehensive health screening."] 
+        },
+        "Sleep & Fatigue": { 
+            "Low Risk": ["Restorative Sleep", "Consistent 7-8 hours of quality sleep. This aids recovery."], 
+            "Moderate Risk": ["Improve Hygiene", "Sleep is inconsistent or tiredness is sometimes present. Reduce screen time before bed."], 
+            "At Risk": ["Urgent Change Needed", "Chronic sleep deprivation (<6 hours) or constant daytime fatigue is indicated. Review your routine."], 
+            "High Risk": ["Medical Consultation", "Severe sleep issues are indicated. Seek consultation for chronic insomnia or persistent fatigue."] 
+        },
+        "Digital & Social Wellness": { 
+            "Low Risk": ["Healthy Balance", "Good digital habits and strong social connections. Keep prioritizing offline activities."], 
+            "Moderate Risk": ["Reduce Screen Time", "Cut back on non-work screen time and ensure one offline hobby per week."], 
+            "At Risk": ["Re-Prioritize Offline", "High screen time and rare offline/social engagement are putting you at risk for burnout."], 
+            "High Risk": ["Digital Detox Required", "Excessive digital overload and isolation are indicated. Immediate reduction of screen time is mandatory."] 
+        },
+        "Lifestyle & Habits": { 
+            "Low Risk": ["Excellent Habits", "Great score on diet, exercise, and hydration. Keep this positive momentum."], 
+            "Moderate Risk": ["Improve Consistency", "Some habits (exercise/diet) are inconsistent. Aim for 3-4 days of activity and daily fruits/veg."], 
+            "At Risk": ["Urgent Change Needed", "High consumption of processed food/alcohol OR low activity. Address tobacco/alcohol use and increase daily exercise."], 
+            "High Risk": ["Major Lifestyle Overhaul", "Multiple poor habits across exercise, diet, and substance use are indicated. Consult a health coach immediately."] 
+        },
     };
-    
-    // Use includes for flexible risk mapping
-    const simpleRisk = riskLevel.includes("High Risk") || riskLevel.includes("Obese") ? "High Risk" : (riskLevel.includes("Moderate Risk") || riskLevel.includes("At Risk") || riskLevel.includes("Underweight") || riskLevel.includes("Overweight") ? "Moderate Risk" : "Low Risk");
 
-    if (subtitles[parameter] && subtitles[parameter][simpleRisk]) {
-        return subtitles[parameter][simpleRisk];
-    }
+    const simpleRisk = riskLevel.includes("High Risk") || riskLevel.includes("Obese") ? "High Risk" : (riskLevel.includes("Moderate Risk") || riskLevel.includes("At Risk") || riskLevel.includes("Underweight") || riskLevel.includes("Overweight") ? "Moderate Risk" : "Low Risk");
     
-    // Fallback for general categories
-    return subtitles[parameter][riskLevel] || ["No detailed subtitle available.", "Please consult the overall recommendations."];
+    if (subtitles[parameter]) {
+         return subtitles[parameter][riskLevel] || subtitles[parameter][simpleRisk];
+    }
+    return ["Suggestion Error", "No specific suggestions available."];
 }
+
 
 function getDetailedSuggestions(parameter, riskLevel) {
     const suggestions = {
-        "CVD Risk (Heart)": { 
-            "Low Risk": ["• Maintain your healthy blood pressure and cholesterol levels with diet and exercise.", "• Regular physical activity (30 min, 5 days/week) is key to cardiovascular health."],
-            "Moderate Risk": ["• Reduce intake of sodium and saturated fats. Increase heart-healthy foods (fish, nuts).", "• If you experience chest discomfort, report it to a physician immediately."],
-            "High Risk": ["• Seek consultation with a cardiologist for a complete check-up (ECG, Stress Test).", "• Strictly adhere to any medication prescribed for BP or cholesterol.", "• Implement tobacco cessation immediately."]
+        "CVD Risk (Heart)": {
+            "Low Risk": ["• Maintain a low-salt, low-fat diet.", "• Ensure annual blood pressure checks.", "• Continue regular, moderate-intensity exercise."],
+            "Moderate Risk": ["• Schedule a follow-up with your physician if you have symptoms like chest pain or thirst.", "• Track your BMI and waist circumference monthly.", "• Increase activity levels to manage weight and prevent NCDs."],
+            "High Risk": ["• Seek urgent consultation with a cardiologist.", "• Follow all prescribed medication plans strictly.", "• Adopt a low-sodium and DASH-style diet immediately."],
         },
         "Diabetes Risk": {
-            "Low Risk": ["• Continue to prioritize a low-sugar, whole-food diet.", "• Maintain a healthy weight and engage in regular exercise."],
-            "Moderate Risk": ["• Limit simple carbohydrates (white bread, sugar) and focus on fiber-rich foods.", "• Request a blood sugar (HbA1c) test during your next health checkup."],
-            "High Risk": ["• Consult an endocrinologist if you have a known diagnosis or strong family history combined with symptoms.", "• Maintain weight control and follow a strict, low-glycemic diet.", "• Increase physical activity to improve insulin sensitivity."]
+            "Low Risk": ["• Maintain balanced meals and limit sugary drinks.", "• Stay physically active (30 mins, 5 days/week).", "• If over 40 or overweight, check fasting blood sugar annually."],
+            "Moderate Risk": ["• Reduce intake of all refined sugars and carbohydrates.", "• Increase fiber intake from whole grains, fruits, and vegetables.", "• Increase physical activity to improve insulin sensitivity."],
+            "High Risk": ["• Consult an endocrinologist immediately to manage sugar levels.", "• Strictly adhere to a low-glycemic, portion-controlled diet.", "• Increase physical activity to improve insulin sensitivity."],
         },
         "Obesity / Metabolic Syndrome": {
             "Low Risk": ["• Continue to maintain your healthy BMI and waist circumference.", "• Focus on strength training to maintain muscle mass and metabolism."],
             "Moderate Risk": ["• Increase daily step count to at least 8,000 steps.", "• Re-evaluate portion sizes, especially for dinner.", "• If Waist Circumference is high, focus on core-strengthening exercises."],
-            "High Risk": ["• Consult a dietitian for a personalized weight loss plan.", "• Request testing for metabolic markers (cholesterol, triglycerides).", "• If BMI is >30, a medical weight management program is strongly recommended."]
+            "High Risk": ["• Consult a dietitian for a personalized weight loss plan.", "• Request testing for metabolic markers (cholesterol, triglycerides).", "• If BMI is >30, a medical weight management program is strongly recommended."],
         },
         // General Area Suggestions (using includes for flexible risk mapping)
-        "Lifestyle & Habits": { 
-            "Low Risk": ["• Maintain your current excellent activity and dietary habits.", "• Continue to limit or avoid tobacco and alcohol.", "• Keep drinking 8+ glasses of water daily."], 
-            "Moderate Risk": ["• Aim for 3-4 days of 30-minute exercise per week.", "• Ensure 3-4 servings of fruits/vegetables daily.", "• Limit fried/processed food to once per week."], 
-            "High Risk": ["• Consult a health coach for a full lifestyle overhaul.", "• Enroll in a tobacco cessation program (if applicable).", "• Prioritize water intake (8+ glasses) and balanced meals immediately."] 
+        "Lifestyle & Habits": {
+            "Low Risk": ["• Maintain your current excellent activity and dietary habits.", "• Continue to limit or avoid tobacco and alcohol.", "• Keep drinking 8+ glasses of water daily."],
+            "Moderate Risk": ["• Aim for 3-4 days of 30-minute exercise per week.", "• Ensure 3-4 servings of fruits/vegetables daily.", "• Limit fried/processed food to once per week."],
+            "At Risk": ["• Join a fitness program to ensure 1-2 days of exercise.", "• Eliminate daily tobacco/alcohol use.", "• Prioritize water intake (8+ glasses) and balanced meals immediately."],
+            "High Risk": ["• Consult a health coach for a full lifestyle overhaul.", "• Enroll in a tobacco cessation program (if applicable).", "• Prioritize water intake (8+ glasses) and balanced meals immediately."],
         },
         "Physical Health & NCD Risk": {
-            "Low Risk": ["• Maintain annual checkups and track key health numbers (BP, BMI, Sugar).", "• Continue physical activity to support joint and muscle health.", "• Report any persistent or unusual symptoms promptly."],
+            "Low Risk": ["• Maintain regular health checkups to track your vitals.", "• Continue regular exercise to keep your body strong.", "• Stay informed about preventive screening guidelines."],
             "Moderate Risk": ["• Schedule a follow-up with your physician if you have symptoms like chest pain or thirst.", "• Track your BMI and waist circumference monthly.", "• Increase activity levels to manage weight and prevent NCDs."],
-            "High Risk": ["• Urgent consultation with a cardiologist or endocrinologist is required.", "• Do not delay comprehensive diagnostic tests.", "• Implement all recommended lifestyle changes immediately to stabilize vitals."]
+            "At Risk": ["• Book an appointment for a comprehensive NCD screening immediately (blood tests, BP, etc.).", "• Implement targeted interventions based on your highest specific NCD risk (CVD, Diabetes, etc.).", "• If suffering from chronic pain, seek a physical therapy consultation."],
+            "High Risk": ["• Seek immediate specialist consultation for known conditions (e.g., cardiologist, endocrinologist).", "• Do not delay any recommended screenings or diagnostic tests.", "• Adhere strictly to all prescribed treatments and medical advice."],
         },
         "Mental & Emotional Wellbeing": {
-            "Low Risk": ["• Continue using your preferred relaxation and stress management techniques.", "• Ensure a healthy separation between work and personal life.", "• Stay connected with your social support network."],
+            "Low Risk": ["• Continue practicing self-care routines like mindfulness or journaling.", "• Maintain strong social connections and open communication.", "• Engage in a hobby or activity you enjoy weekly for relaxation."],
             "Moderate Risk": ["• Dedicate 10 minutes daily to mindfulness or deep breathing.", "• Set clear 'off-limits' times for work communication.", "• Engage in a hobby or activity you enjoy weekly for relaxation."],
+            "At Risk": ["• Seek professional support from a psychologist or counselor for persistent stress/sadness.", "• Prioritize sleep, nutrition, and hydration to stabilize your body's response to stress.", "• Actively manage work-life balance by setting boundaries."],
             "High Risk": ["• Urgent referral for counseling/therapy is mandatory.", "• Communicate burnout/distress to HR/management for supportive changes.", "• Focus solely on self-care and recovery until stable."]
         },
         "Preventive Health & Awareness": {
             "Low Risk": ["• Ensure you always know your latest BP, Sugar, and BMI readings.", "• Stay up-to-date on all recommended vaccinations and screenings.", "• Continue being proactive in seeking health information."],
             "Moderate Risk": ["• Book a full-body checkup within the next 3 months.", "• Keep a log of your BP, sugar, and cholesterol numbers.", "• Research common lifestyle diseases and their prevention."],
+            "At Risk": ["• A comprehensive diagnostic panel is mandatory immediately.", "• Work with a health coach to track and interpret your vitals.", "• Do not postpone any preventive screenings."],
             "High Risk": ["• A comprehensive diagnostic panel is mandatory immediately.", "• Work with a health coach to track and interpret your vitals.", "• Do not postpone any preventive screenings."]
         },
         "Sleep & Fatigue": {
             "Low Risk": ["• Continue to maintain a consistent sleep schedule (7-8 hours).", "• Avoid screen usage close to bedtime to maintain sleep quality.", "• Use your bedroom only for sleep and rest."],
             "Moderate Risk": ["• Ensure bedroom is cool, dark, and quiet.", "• Avoid caffeine and heavy meals close to bedtime.", "• Reduce screen time before bed to one hour."],
-            "High Risk": ["• Seek consultation for chronic insomnia or persistent fatigue.", "• Eliminate all screens and work-related materials from the bedroom.", "• Address underlying stress or anxiety that is disrupting sleep."]
+            "At Risk": ["• Establish a strict, non-negotiable bedtime and wake-up time.", "• If fatigue is persistent, consult a physician for a sleep assessment.", "• Eliminate all screen time in the hour before bed."],
+            "High Risk": ["• If fatigue is persistent, consult a physician for a sleep assessment.", "• Eliminate all screen time in the hour before bed.", "• Seek consultation for chronic insomnia or persistent fatigue."]
         },
         "Digital & Social Wellness": {
-            "Low Risk": ["• Continue balancing screen time with offline leisure and maintain strong social bonds.", "• Avoid using digital devices for personal tasks during work hours.", "• Keep a regular schedule for offline social activities."],
+            "Low Risk": ["• Maintain a low non-work screen time and ensure one offline hobby per week.", "• Keep prioritizing offline activities and regular social interaction.", "• Continue to have clear boundaries between work/digital life."],
             "Moderate Risk": ["• Aim to spend less than 3 hours on non-work screens daily.", "• Schedule at least one hour of offline/outdoor leisure weekly.", "• Intentionally call or meet a friend/family member weekly."],
-            "High Risk": ["• Implement a strict digital detox plan.", "• Seek support to address social anxiety or isolation.", "• Prioritize face-to-face interactions over digital communication."]
-        }
+            "At Risk": ["• Institute a 'digital sunset' rule (e.g., no non-essential screens after 9 pm).", "• Join a club or group to boost social connections.", "• Dedicate a specific time slot to an outdoor activity every week."],
+            "High Risk": ["• Consult a coach to help with digital detox and boundary setting.", "• Prioritize in-person social interaction over digital scrolling.", "• Dedicate a specific time slot to an outdoor activity every week."]
+        },
     };
-    
-    const simpleRisk = riskLevel.includes("High Risk") || riskLevel.includes("Obese") ? "High Risk" : (riskLevel.includes("Moderate Risk") || riskLevel.includes("At Risk") || riskLevel.includes("Underweight") || riskLevel.includes("Overweight") ? "Moderate Risk" : "Low Risk");
 
+    const simpleRisk = riskLevel.includes("High Risk") || riskLevel.includes("Obese") ? "High Risk" : (riskLevel.includes("Moderate Risk") || riskLevel.includes("At Risk") || riskLevel.includes("Underweight") || riskLevel.includes("Overweight") ? "Moderate Risk" : "Low Risk");
+    
+    // For NCDs, we use the exact riskLevel determined by riskMap. For general areas, we use the 4-level system.
     if (suggestions[parameter] && suggestions[parameter][simpleRisk]) {
         return suggestions[parameter][simpleRisk];
     }
-    
     return suggestions[parameter][riskLevel] || ["No specific suggestions available."];
 }
 
-
 // --- 5. PDF GENERATION FUNCTIONS ---
 
-function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
-    const ACCENT_COLOR = [29, 166, 154]; 
+// Function to generate the Overall Summary Table
+function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, startY) {
+    const ACCENT_COLOR = [29, 166, 154];
+    const TEXT_COLOR = [44, 62, 80];
     const bmiResult = calculateBMI();
+    let y = startY;
 
-    doc.setFont("helvetica", "bold"); // FIXED FONT
-    doc.setFontSize(14);
-    doc.text("Overall Health Summary", 105, 50, { align: "center" });
+    // Title: Overall Health Summary
+    doc.setFont("helvetica", "bold"); 
+    doc.setTextColor(TEXT_COLOR);
+    doc.setFontSize(14); // Standard title size
+    doc.text("Overall Health Summary", 105, y, { align: "center" });
+    y += 8;
 
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal"); // FIXED FONT
+    const tableStyles = { 
+        fontSize: 12, // Standard content size
+        font: "helvetica", 
+        textColor: TEXT_COLOR 
+    };
 
     let summaryData = [
         ["Overall Health Score", `${score}/100`],
-        ["Risk Status", riskStatus],
+        ["Risk Status", { content: riskStatus, styles: { textColor: getRiskColor(riskStatus), fontStyle: 'bold' } }],
         ["BMI (Calculated)", `${bmiResult.bmi} kg/m²`],
-        ["BMI Status", bmiResult.risk.replace(/.*- /, '')] // Display only the status (e.g., "Healthy Weight")
-    ];
+        ["BMI Status", { content: bmiResult.risk.replace(/.*- /, ''), styles: { textColor: getRiskColor(bmiResult.risk) } }]
+    ]; 
 
-    // Add Basic Profile Data
+    doc.autoTable({
+        startY: y,
+        head: [["Metric", "Value"]],
+        body: summaryData,
+        theme: "grid",
+        headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold', fontSize: 12 },
+        styles: tableStyles, 
+        columnStyles: { 1: { fontStyle: 'bold' } }
+    });
+    y = doc.autoTable.previous.finalY + 8;
+
+    // Basic Profile Data
     let profileData = [
         ["Age", formData.age],
         ["Gender", formData.gender],
@@ -705,257 +556,171 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     ];
 
     doc.autoTable({
-        startY: 60,
-        head: [["Metric", "Value"]],
-        body: summaryData,
-        theme: "grid",
-        headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
-        alternateRowStyles: { fillColor: [240, 240, 240] }
-    });
-    
-    let y = doc.autoTable.previous.finalY + 5;
-
-    doc.setFont("helvetica", "bold"); // FIXED FONT
-    doc.text("Basic Profile:", 14, y);
-    y += 6;
-
-    doc.autoTable({
         startY: y,
+        head: [["Basic Profile", "Value"]],
         body: profileData,
-        theme: "plain",
-        styles: { fontSize: 10, cellPadding: 2, font: "helvetica" }, // FIXED FONT
-        columnStyles: { 0: { fontStyle: 'bold' }, 1: { halign: 'left' } }
+        theme: "grid",
+        headStyles: { fillColor: [44, 62, 80], textColor: 255, fontStyle: 'bold', fontSize: 12 },
+        styles: tableStyles,
     });
-
     y = doc.autoTable.previous.finalY + 10;
 
-    doc.setFont("helvetica", "bold"); // FIXED FONT
+    // Overall Health Suggestions
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12); // Suggestions Title size
     doc.text("Overall Health Suggestions:", 14, y);
     y += 6;
 
-    doc.setFont("helvetica", "normal"); // FIXED FONT
-    overallHealthSuggestion.forEach((suggestion) => {
-        doc.text(`• ${suggestion}`, 14, y);
-        y += 6;
-    });
-
-    return y + 10;
-}
-
-// Request 2: New function to generate the NCD-focused risk scoring table
-function generateNCDsRiskTable(doc, y) {
-    const ACCENT_COLOR = [44, 62, 80];
-    const ncdRisks = getNCDsDetailedRisk();
-
-    doc.setFont("helvetica", "bold"); // FIXED FONT
-    doc.text("Key Non-Communicable Disease (NCD) Risk Summary", 105, y, { align: "center" });
-
-    y += 8;
-
-    let ncdData = Object.entries(ncdRisks).map(([key, value]) => [
-        key,
-        `${value.score}/${value.max}`,
-        {
-            content: value.risk,
-            styles: { textColor: getRiskColor(value.risk) }
-        }
-    ]);
-
-    doc.autoTable({
-        startY: y,
-        head: [["Specific NCD Risk", "Raw Score", "Risk Level"]],
-        body: ncdData,
-        theme: "grid",
-        headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
-        alternateRowStyles: { fillColor: [240, 240, 240] }
-    });
-
-    return doc.autoTable.previous.finalY + 10;
-}
-
-
-function generateHealthRiskTable(doc, y, healthAreas) {
-    const ACCENT_COLOR = [44, 62, 80];
-
-    doc.setFont("helvetica", "bold"); // FIXED FONT
-    doc.text("Health Area Risk Levels", 105, y, { align: "center" });
-
-    y += 8;
-
-    let healthData = Object.entries(healthAreas).map(([key, value]) => [
-        key,
-        {
-            content: value,
-            styles: { textColor: getRiskColor(value) }
-        }
-    ]);
-
-    doc.autoTable({
-        startY: y,
-        head: [["Health Area", "Risk Level"]],
-        body: healthData,
-        theme: "grid",
-        headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
-        alternateRowStyles: { fillColor: [240, 240, 240] }
-    });
-
-    return doc.autoTable.previous.finalY + 10;
-}
-
-function generateRiskDetails(doc, y, healthAreas) {
-    const ACCENT_COLOR = [44, 62, 80];
-    const ncdRisks = getNCDsDetailedRisk();
-    
-    // Combine detailed NCD risks with general health areas for the detailed page
-    const orderedKeys = [
-        "CVD Risk (Heart)", 
-        "Diabetes Risk", 
-        "Obesity / Metabolic Syndrome",
-        "Lifestyle & Habits", 
-        "Mental & Emotional Wellbeing",
-        "Sleep & Fatigue", 
-        "Digital & Social Wellness",
-        "Preventive Health & Awareness"
-    ];
-
-    const allAreas = {...ncdRisks, ...healthAreas};
-    
-    orderedKeys.forEach((key) => {
-        const item = allAreas[key];
-        if (!item) return;
-
-        if (y > doc.internal.pageSize.height - 60) {
-            doc.addPage();
-            y = 20;
-        }
-
-        let isNCDDetail = ncdRisks.hasOwnProperty(key);
-        let riskLevel = isNCDDetail ? item.risk : item;
-        let riskScore = isNCDDetail ? `${item.score}/${item.max}` : `${calculateParameterScore(key)}/10`;
-        let subtitleText = getRiskSubtitle(key, riskLevel);
-        let riskColor = getRiskColor(riskLevel);
-
-        doc.setFont("helvetica", "bold"); // FIXED FONT
-        doc.setFontSize(12);
-        doc.text(key, 14, y);
-        y += 6;
-
-        if (y > doc.internal.pageSize.height - 50) {
-            doc.addPage();
-            y = 20;
-        }
-        
-        doc.autoTable({
-            startY: y,
-            head: [["Metric", "Value"]],
-            body: [
-                ["Risk Score", riskScore],
-                ["Risk Level", { content: riskLevel, styles: { textColor: riskColor, fontStyle: 'bold' } }],
-                ...(key.includes("Obesity") ? [["BMI", calculateBMI().bmi + ' kg/m²']] : [])
-            ],
-            theme: "grid",
-            headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-            styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
-            alternateRowStyles: { fillColor: [240, 240, 240] }
-        });
-
-        y = doc.autoTable.previous.finalY + 10;
-
-        if (y > doc.internal.pageSize.height - 50) {
-            doc.addPage();
-            y = 20;
-        }
-        
-        doc.setFont("helvetica", "bold"); // FIXED FONT
-        doc.text(subtitleText[0], 14, y);
-        y += 6;
-        doc.setFont("helvetica", "normal"); // FIXED FONT
-
-        let lines = doc.splitTextToSize(subtitleText.slice(1).join("\n"), 180);
-        doc.text(lines, 14, y);
-        y += lines.length * 6 + 10;
-
-        // Show improvement suggestions if not Low Risk
-        if (!riskLevel.includes("Low Risk") && !riskLevel.includes("Healthy Weight")) { 
-            if (y > doc.internal.pageSize.height - 50) {
-                doc.addPage();
-                y = 20;
-            }
-            let suggestions = getDetailedSuggestions(key, riskLevel);
-            doc.setFont("helvetica", "bold"); // FIXED FONT
-            doc.text("How to Improve:", 14, y);
-            y += 6;
-            doc.setFont("helvetica", "normal"); // FIXED FONT
-
-            let suggestionLines = doc.splitTextToSize(suggestions.join("\n"), 180);
-            doc.text(suggestionLines, 14, y);
-            y += suggestionLines.length * 6 + 10;
-        }
-
-        // Horizontal line separator
-        if (y < doc.internal.pageSize.height - 20) {
-            doc.setDrawColor(150, 150, 150);
-            doc.setLineWidth(0.5);
-            doc.line(10, y, 200, y);
-            y += 10;
-        }
-
-        if (y > doc.internal.pageSize.height - 50) {
-            doc.addPage();
-            y = 20;
-        }
-    });
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12); // Suggestions text size
+    let suggestionLines = doc.splitTextToSize(overallHealthSuggestion.map(s => `• ${s}`).join("\n"), 180);
+    doc.text(suggestionLines, 14, y);
+    y += suggestionLines.length * 6 + 10; 
 
     return y;
 }
 
-function generatePDF() {
-    // Check for jsPDF availability
-    if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
-        alert("FATAL ERROR: PDF libraries are not loaded correctly. Please check index.html script order.");
-        console.error("jsPDF or jsPDF.jsPDF is undefined. Cannot generate PDF.");
-        return;
-    }
+
+// Function to generate the Detailed Risk Recommendations (Page 2 onwards)
+function generateRiskDetails(doc, y, healthAreas) {
+    const ACCENT_COLOR = [44, 62, 80];
+    const NCD_COLOR = [29, 166, 154];
+    const TEXT_COLOR = [44, 62, 80];
+    const ncdRisks = getNCDsDetailedRisk();
     
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    // Order the sections: NCDs first, then the 6 Health Areas
+    const orderedKeys = [
+        "CVD Risk (Heart)", "Diabetes Risk", "Obesity / Metabolic Syndrome",
+        "Lifestyle & Habits", "Physical Health & NCD Risk", "Mental & Emotional Wellbeing", 
+        "Preventive Health & Awareness", "Sleep & Fatigue", "Digital & Social Wellness"
+    ];
 
-    if (typeof doc.autoTable !== "function") {
-        alert("Error: jsPDF AutoTable plugin is not loaded.");
-        return;
-    }
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(ACCENT_COLOR);
+    doc.setFontSize(16); // Main page title
+    doc.text("Detailed Risk Profile & Recommendations", 105, y, { align: "center" });
+    y += 12;
 
-    saveData("modal5"); 
+    orderedKeys.forEach((key) => {
+        const isNCD = ncdRisks.hasOwnProperty(key);
+        const areaData = isNCD ? ncdRisks[key] : healthAreas[key];
+        
+        // Skip if key doesn't exist (e.g., if ncdRisks/healthAreas structure changes)
+        if (!areaData) return; 
 
-    const currentDate = new Date().toLocaleDateString();
-    const currentTime = new Date().toLocaleTimeString();
-    const { score, riskStatus } = calculateHealthScore();
-    const overallHealthSuggestion = getOverallHealthSuggestion(score, riskStatus);
-    const healthAreas = getHealthAreas();
+        // Determine risk level
+        const riskLevel = isNCD ? areaData.risk : areaData;
+        const subtitleData = getDetailedRiskSubtitle(key, riskLevel);
 
-    const logo = new Image();
-    // Assuming 'logo.png' is in the root directory
-    logo.src = "logo.png"; 
+        // Page break logic
+        if (y > doc.internal.pageSize.height - 70) {
+            doc.addPage();
+            y = 20;
+        }
 
-    const generateContent = function () {
+        // --- 1. Area Title ---
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(ACCENT_COLOR);
+        doc.setFontSize(14); // Area Title size
+        doc.text(key, 14, y);
+        y += 8;
+
+        // --- 2. Subtitle (Risk/Action Status) ---
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(isNCD ? NCD_COLOR : ACCENT_COLOR);
+        doc.setFontSize(12); // Subtitle size
+        doc.text(subtitleData[0], 14, y);
+        y += 6;
+
+        // --- 3. Subtitle Description ---
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(TEXT_COLOR);
+        doc.setFontSize(12); // Subtitle Description size
+        let descLines = doc.splitTextToSize(subtitleData[1], 180);
+        doc.text(descLines, 14, y);
+        y += descLines.length * 6 + 4;
+        
+        // --- 4. Additional NCD Details (If applicable) ---
+        if (isNCD && areaData.details) {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text(areaData.details, 14, y);
+            y += 6;
+        }
+
+        // --- 5. How to Improve Title ---
+        let suggestions = getDetailedSuggestions(key, riskLevel);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(TEXT_COLOR);
+        doc.setFontSize(12); // Suggestions Title size
+        doc.text("How to Improve:", 14, y);
+        y += 6;
+
+        // --- 6. Suggestions Text ---
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12); // Suggestions text size
+        let suggestionLines = doc.splitTextToSize(suggestions.map(s => `${s}`).join("\n"), 180);
+        doc.text(suggestionLines, 14, y);
+        y += suggestionLines.length * 6 + 10;
+        
+        // Horizontal line separator
+        if (y < doc.internal.pageSize.height - 50) {
+            doc.setDrawColor(200);
+            doc.line(10, y - 5, 200, y - 5);
+        }
+    });
+    return y;
+}
+
+// Function to generate the main PDF document (Now Synchronous, no Image loading)
+// --- 5. PDF GENERATION FUNCTION (Updated for robust error handling) ---
+
+function generatePDF() {
+    // 1. CRITICAL: Start the overarching try...catch block
+    try { 
+        // Get jsPDF from the window object
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // 2. CRITICAL: Check if AutoTable is available
+        if (typeof doc.autoTable !== "function") {
+            alert("FATAL ERROR: jsPDF AutoTable plugin is not loaded. Please ensure the link in index.html is correct.");
+            return;
+        }
+
+        // Save data before proceeding
+        saveData("modal5"); 
+        
+        const currentDate = new Date().toLocaleDateString();
+        const currentTime = new Date().toLocaleTimeString();
+        const { score, riskStatus } = calculateHealthScore();
+        const overallHealthSuggestion = getOverallHealthSuggestion(score, riskStatus);
+        const healthAreas = getHealthAreas();
+
+        // Logo Handling: Set image source
+        const logo = new Image();
+        logo.src = "logo.png";
+        
+        // --- PDF Content Generation Start ---
+
+        // Attempt to add Logo (Safely inside a separate try/catch)
+        try {
+            // Check if image is loaded and has dimensions
+            if (logo.complete && logo.naturalWidth > 0) {
+                doc.addImage(logo, "PNG", 10, 10, 65, 15);
+            } else {
+                // If the logo failed to load, log it but continue
+                console.warn("Logo image failed to load or is not present. Skipping logo addition.");
+            }
+        } catch (e) {
+            console.warn("Could not add logo image to PDF:", e.message);
+        }
+        
         // Set document header font and colors
-        doc.setFont("helvetica", "bold"); // FIXED FONT
+        doc.setFont("helvetica", "bold"); 
         doc.setTextColor(44, 62, 80); // Dark Blue/Gray
         doc.setFontSize(16);
         doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" });
-
-        // Add Logo - Use try/catch or a condition to handle load failure gracefully
-        try {
-            // Add image only if it loaded successfully (width/height > 0)
-            if (logo.width > 0 && logo.height > 0) {
-                doc.addImage(logo, "PNG", 10, 10, 65, 15);
-            }
-        } catch (e) {
-            console.warn("Could not add logo image to PDF:", e);
-        }
 
         // Date/Time
         doc.setFontSize(10);
@@ -970,7 +735,7 @@ function generatePDF() {
         // 1. Overall Summary (Includes BMI and Basic Profile)
         y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y);
         
-        // 2. Detailed NCD Risk Table (Request 2)
+        // 2. Detailed NCD Risk Table 
         y = generateNCDsRiskTable(doc, y);
 
         // 3. Health Area Risk Table
@@ -979,18 +744,180 @@ function generatePDF() {
         doc.addPage();
         y = 20;
         
-        // 4. Detailed Risk Recommendations (Includes NCD Sub-Risks)
+        // 4. Detailed Risk Recommendations 
         y = generateRiskDetails(doc, y, healthAreas);
 
+        // FINAL STEP: Save the PDF
         doc.save("NIZCARE_Health_Scorecard.pdf");
-    };
 
-    // The logic to ensure 'generateContent' runs once the image is ready (or fails)
-    if (logo.complete) {
-        generateContent(); 
-    } else {
-        logo.onload = generateContent; 
-        // Important: Use onerror as a fallback so the PDF still generates even if the logo is missing/broken
-        logo.onerror = generateContent; 
+        // Hide the final modal after successful generation
+        const modalElement = document.getElementById("modal5");
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) {
+            modal.hide();
+        }
+
+
+    } catch (error) {
+        // This alert will show the exact reason the page is crashing
+        alert("PDF Generation Failed! \n\nError: " + error.message + "\n\n(Check the browser console for more details by pressing F12.)");
+        console.error("Critical PDF Generation Error:", error);
+
+        // You might want to keep the modal open to let the user see the error/try again
     }
+}
+
+// --- Generic Functions & Field Generation (Unchanged for brevity) ---
+function generateField(field) {
+    if (field.type === "select") {
+        const optionsHTML = field.options.map(option => {
+            const cleanText = option.replace(/\s*\([^)]+\)$/, '');
+            return `<option value="${option}">${cleanText}</option>`;
+        }).join("");
+        return `
+            <div class="mb-3">
+                <label class="form-label">${field.label}</label>
+                <select id="${field.id}" class="form-select" onchange="handleFieldChange('${field.id}', this.value)">
+                    <option value="">Select an option</option>
+                    ${optionsHTML}
+                </select>
+            </div>
+        `;
+    } else if (field.type === "multicheckbox") {
+        const checkboxesHTML = field.options.map((option, index) => {
+            const checkboxId = `${field.id}_${index}`;
+            return `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="${option}" id="${checkboxId}" 
+                           onchange="handleMulticheckboxChange('${field.id}')">
+                    <label class="form-check-label" for="${checkboxId}">${option}</label>
+                </div>
+            `;
+        }).join("");
+
+        // A hidden input to store the joined values
+        return `
+            <div class="mb-3" id="${field.id}_group">
+                <label class="form-label">${field.label}</label>
+                <div>${checkboxesHTML}</div>
+                <input type="hidden" id="${field.id}" value="" />
+            </div>
+        `;
+
+    } else if (field.type === "number") {
+         return `
+            <div class="mb-3">
+                <label class="form-label">${field.label}</label>
+                <input type="number" id="${field.id}" class="form-control" onchange="handleFieldChange('${field.id}', this.value)" min="0">
+            </div>
+        `;
+    } else { // type === "text"
+        return `
+            <div class="mb-3">
+                <label class="form-label">${field.label}</label>
+                <input type="text" id="${field.id}" class="form-control" onchange="handleFieldChange('${field.id}', this.value)">
+            </div>
+        `;
+    }
+}
+
+function handleFieldChange(id, value) {
+    formData[id] = value;
+}
+
+function handleMulticheckboxChange(id) {
+    const checkboxes = document.querySelectorAll(`#${id}_group input[type="checkbox"]:checked`);
+    const values = Array.from(checkboxes).map(cb => cb.value);
+    document.getElementById(id).value = values.join("; ");
+    formData[id] = values.join("; ");
+}
+
+function openModal(id) {
+    const modalElement = document.getElementById(id);
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+function prevModal(currentId, prevId) {
+    const currentModal = bootstrap.Modal.getInstance(document.getElementById(currentId));
+    currentModal.hide();
+    openModal(prevId);
+}
+
+function validateAndNext(currentId, nextId) {
+    if (validateInputs(currentId)) {
+        saveData(currentId);
+        const currentModal = bootstrap.Modal.getInstance(document.getElementById(currentId));
+        currentModal.hide();
+        openModal(nextId);
+    } else {
+        alert("Please fill in all required fields.");
+    }
+}
+
+function validateAndGeneratePDF() {
+    if (validateInputs("modal5")) {
+        saveData("modal5");
+        const finalModal = bootstrap.Modal.getInstance(document.getElementById("modal5"));
+        // Hide the modal immediately, PDF generation will now start synchronously.
+        finalModal.hide(); 
+        generatePDF();
+    } else {
+        alert("Please fill in all required fields.");
+    }
+}
+
+function saveData(modalId) {
+    const section = sections.find(s => s.id === modalId);
+    section.fields.forEach(field => {
+        const input = document.getElementById(field.id);
+        if (input) {
+            if (field.type === "multicheckbox") {
+                // Multicheckbox is handled by its dedicated change handler
+                // The value should already be stored in the hidden input and formData
+                const values = Array.from(document.querySelectorAll(`#${field.id}_group input[type="checkbox"]:checked`)).map(cb => cb.value);
+                formData[field.id] = values.join("; ");
+            } else if (field.type === "select") {
+                formData[field.id] = input.value;
+            } else {
+                formData[field.id] = input.value.trim();
+            }
+        }
+    });
+}
+
+function validateInputs(modalId) {
+    let allFilled = true;
+    
+    // Validate standard inputs (select, text, number)
+    let inputs = document.querySelectorAll(`#${modalId} input:not([type="checkbox"]), #${modalId} select`);
+    inputs.forEach(input => {
+        if ((input.type === "select-one" && input.value.trim() === "") || (input.type !== "select-one" && !input.value.trim())) {
+            if (input.id !== "familyHistoryNCDs") { // Family History is optional/handled differently in PDF but mandatory to proceed
+                 input.classList.add("is-invalid");
+                 allFilled = false;
+            }
+        } else {
+            input.classList.remove("is-invalid");
+        }
+    });
+
+    // Specific check for Height, Weight, Age, Service Length to ensure they are positive numbers
+    if (modalId === "modal1") {
+        const fieldsToCheck = ["height_cm", "weight_kg", "age", "serviceLength"];
+        fieldsToCheck.forEach(id => {
+            const inputElement = document.getElementById(id);
+            const value = parseFloat(inputElement.value);
+            const isServiceLength = id === "serviceLength";
+            
+            if (isNaN(value) || (isServiceLength ? value < 0 : value <= 0)) {
+                inputElement.classList.add("is-invalid");
+                allFilled = false;
+            } else {
+                inputElement.classList.remove("is-invalid");
+            }
+        });
+    }
+
+    return allFilled;
 }
