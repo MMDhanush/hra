@@ -51,7 +51,7 @@ const sections = [
             { id: "fruitsVeg", label: "Fruits & vegetables intake", type: "select", options: ["Rarely (0)", "3–4 times/week (5)", "Daily (10)"] },
             { id: "processedFood", label: "Fried/processed food consumption", type: "select", options: ["4+ times/week (0)", "2–3 times/week (5)", "Rarely (10)"] },
             { id: "tobaccoAlcohol", label: "Tobacco/alcohol usage", type: "select", options: ["Regular (0)", "Occasionally (5)", "None (10)"] },
-            { id: "water", label: "Water intake/day", type: "select", options: ["<4 glasses (0)", "4–6 (2)", "7–8 (3)", "8+ (5)"] }
+            { id: "water", label: "Water intake/day (Glasses)", type: "select", options: ["<4 glasses (0)", "4–6 (2)", "7–8 (3)", "8+ (5)"] }
         ]
     },
     {
@@ -61,7 +61,7 @@ const sections = [
             // CVD
             { id: "bpDiagnosis", label: "High BP diagnosed/known?", type: "select", options: ["Yes (0)", "No (5)"] },
             { id: "chestPain", label: "Chest pain/palpitations?", type: "select", options: ["Yes (0)", "Sometimes (2)", "No (5)"] },
-            { id: "cvdFamilyHistory", label: "Family history of CVD?", type: "select", options: ["Yes (0)", "No (3)"] },
+            { id: "cvdFamilyHistory", label: "Family history of CVDs (Heart Diseases)?", type: "select", options: ["Yes (0)", "No (3)"] },
             // Diabetes
             { id: "sugarDiagnosis", label: "High blood sugar diagnosed?", type: "select", options: ["Yes (0)", "No (5)"] },
             { id: "excessiveThirst", label: "Excessive thirst/frequent urination/unexplained weight change?", type: "select", options: ["Yes (0)", "Sometimes (2)", "No (5)"] },
@@ -236,6 +236,7 @@ function calculateHealthScore() {
     const MAX_RAW_E = 35; 
     const MAX_RAW_F = 25; 
     const MAX_RAW_C = 65; // Total C remains 65 
+    const MAX_RAW_G = 40; // Max score for Digital & Social Wellness 
 
     // Calculate BMI score (Request 4)
     const bmiResult = calculateBMI();
@@ -584,14 +585,14 @@ function saveData(modalId) {
 function getRiskColor(riskLevel) {
     if (riskLevel.includes("High Risk") || riskLevel.includes("Obese")) return [255, 0, 0]; // Red
     if (riskLevel.includes("At Risk") || riskLevel.includes("Underweight")) return [255, 128, 0]; // Orange
-    if (riskLevel.includes("Moderate Risk") || riskLevel.includes("Overweight")) return [255, 255, 0]; // Yellow
+    if (riskLevel.includes("Moderate Risk") || riskLevel.includes("Overweight")) return [139, 128, 0]; // Yellow
     return [0, 128, 0]; // Darker Green for Low Risk
 }
 
 function getRiskSubtitle(parameter, riskLevel) {
     const subtitles = {
         "Lifestyle & Habits": { "Low Risk": ["Great job!", "Maintain your excellent activity and diet habits."], "Moderate Risk": ["Focus on Diet", "Increase fruit/veg and reduce processed food intake."], "At Risk": ["Urgent Change Needed", "Address tobacco/alcohol use and increase daily exercise."], "High Risk": ["Critical Risk", "Immediate intervention needed across all habits."] },
-        "Physical Health & NCD Risk": { "Low Risk": ["Excellent Screening", "Low risk for major NCDs. Maintain vigilance."], "Moderate Risk": ["Monitor Vitals", "Pay attention to any symptoms (thirst, pain) and schedule a checkup."], "At Risk": ["Screening Required", "High-risk factors present. Consult a doctor for targeted NCD screening (CVD, Diabetes)."], "High Risk": ["Immediate Medical Care", "Known high BP/Sugar or multiple severe symptoms require urgent specialist consultation."] },
+        "Physical Health & NCD Risk": { "Low Risk": ["Excellent Screening", "Low risk for major NCDs. Maintain vigilance."], "Moderate Risk": ["Monitor Vitals", "Pay attention to any symptoms (thirst, pain) and schedule a checkup."], "At Risk": ["Screening Required", "High-risk factors present. Consult a doctor for targeted NCD screening (CVDs (Heart Diseases), Diabetes)."], "High Risk": ["Immediate Medical Care", "Known high BP/Sugar or multiple severe symptoms require urgent specialist consultation."] },
         "Mental & Emotional Wellbeing": { "Low Risk": ["Excellent Balance", "You cope well with stress. Keep up relaxation techniques."], "Moderate Risk": ["Need for Breaks", "Stress and balance are slipping. Prioritize time for relaxation and coping strategies."], "At Risk": ["Professional Support", "Persistent sadness or frequent anxiety is present. Seek professional counseling."], "High Risk": ["Crisis Point", "High distress/burnout indicated. Urgent mental health support is critical."] },
         "Preventive Health & Awareness": { "Low Risk": ["Proactive Care", "You are aware of your vitals and up-to-date on checkups."], "Moderate Risk": ["Annual Checkup Due", "If >1 year since last checkup, schedule one immediately. Know your numbers."], "At Risk": ["High Unawareness", "Lack of recent checkups AND unawareness of vitals. Requires urgent screening."], "High Risk": ["Mandatory Screening", "No awareness and no checkups. Requires immediate comprehensive health screening."] },
         "Sleep & Fatigue": { "Low Risk": ["Restorative Sleep", "Consistent 7-8 hours of quality sleep. This aids recovery."], "Moderate Risk": ["Improve Hygiene", "Sleep is inconsistent or tiredness is sometimes present. Reduce screen time before bed."], "At Risk": ["Chronic Fatigue", "Low average sleep and constant tiredness. Requires medical input for sleep quality."], "High Risk": ["Severe Sleep Debt", "Chronic sleep deprivation. Address underlying cause (stress/sleep disorder) immediately."] },
@@ -677,15 +678,15 @@ function getDetailedSuggestions(parameter, riskLevel) {
 // --- 5. PDF GENERATION FUNCTIONS ---
 
 function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
-    const ACCENT_COLOR = [44, 62, 80]; 
+    const ACCENT_COLOR = [29, 166, 154]; 
     const bmiResult = calculateBMI();
 
-    doc.setFont("helvetica", "bold"); 
+    doc.setFont("helvetica", "bold"); // FIXED FONT
     doc.setFontSize(14);
     doc.text("Overall Health Summary", 105, 50, { align: "center" });
 
     doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "normal"); // FIXED FONT
 
     let summaryData = [
         ["Overall Health Score", `${score}/100`],
@@ -709,13 +710,13 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
         body: summaryData,
         theme: "grid",
         headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 12, halign: "center" },
+        styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
         alternateRowStyles: { fillColor: [240, 240, 240] }
     });
     
     let y = doc.autoTable.previous.finalY + 5;
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "bold"); // FIXED FONT
     doc.text("Basic Profile:", 14, y);
     y += 6;
 
@@ -723,17 +724,17 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
         startY: y,
         body: profileData,
         theme: "plain",
-        styles: { fontSize: 10, cellPadding: 2 },
+        styles: { fontSize: 10, cellPadding: 2, font: "helvetica" }, // FIXED FONT
         columnStyles: { 0: { fontStyle: 'bold' }, 1: { halign: 'left' } }
     });
 
     y = doc.autoTable.previous.finalY + 10;
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "bold"); // FIXED FONT
     doc.text("Overall Health Suggestions:", 14, y);
     y += 6;
 
-    doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "normal"); // FIXED FONT
     overallHealthSuggestion.forEach((suggestion) => {
         doc.text(`• ${suggestion}`, 14, y);
         y += 6;
@@ -747,7 +748,7 @@ function generateNCDsRiskTable(doc, y) {
     const ACCENT_COLOR = [44, 62, 80];
     const ncdRisks = getNCDsDetailedRisk();
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "bold"); // FIXED FONT
     doc.text("Key Non-Communicable Disease (NCD) Risk Summary", 105, y, { align: "center" });
 
     y += 8;
@@ -767,7 +768,7 @@ function generateNCDsRiskTable(doc, y) {
         body: ncdData,
         theme: "grid",
         headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 12, halign: "center" },
+        styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
         alternateRowStyles: { fillColor: [240, 240, 240] }
     });
 
@@ -778,7 +779,7 @@ function generateNCDsRiskTable(doc, y) {
 function generateHealthRiskTable(doc, y, healthAreas) {
     const ACCENT_COLOR = [44, 62, 80];
 
-    doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "bold"); // FIXED FONT
     doc.text("Health Area Risk Levels", 105, y, { align: "center" });
 
     y += 8;
@@ -797,7 +798,7 @@ function generateHealthRiskTable(doc, y, healthAreas) {
         body: healthData,
         theme: "grid",
         headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 12, halign: "center" },
+        styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
         alternateRowStyles: { fillColor: [240, 240, 240] }
     });
 
@@ -817,9 +818,8 @@ function generateRiskDetails(doc, y, healthAreas) {
         "Mental & Emotional Wellbeing",
         "Sleep & Fatigue", 
         "Digital & Social Wellness",
-        "Physical Health & NCD Risk", // Keep this one last or remove if its covered by the 3 NCDs
         "Preventive Health & Awareness"
-    ].filter(key => key !== "Physical Health & NCD Risk"); // Don't show redundant detail for this major area
+    ];
 
     const allAreas = {...ncdRisks, ...healthAreas};
     
@@ -838,7 +838,7 @@ function generateRiskDetails(doc, y, healthAreas) {
         let subtitleText = getRiskSubtitle(key, riskLevel);
         let riskColor = getRiskColor(riskLevel);
 
-        doc.setFont("helvetica", "bold");
+        doc.setFont("helvetica", "bold"); // FIXED FONT
         doc.setFontSize(12);
         doc.text(key, 14, y);
         y += 6;
@@ -858,7 +858,7 @@ function generateRiskDetails(doc, y, healthAreas) {
             ],
             theme: "grid",
             headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-            styles: { fontSize: 12, halign: "center" },
+            styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
             alternateRowStyles: { fillColor: [240, 240, 240] }
         });
 
@@ -869,10 +869,10 @@ function generateRiskDetails(doc, y, healthAreas) {
             y = 20;
         }
         
-        doc.setFont("helvetica", "bold");
+        doc.setFont("helvetica", "bold"); // FIXED FONT
         doc.text(subtitleText[0], 14, y);
         y += 6;
-        doc.setFont("helvetica", "normal");
+        doc.setFont("helvetica", "normal"); // FIXED FONT
 
         let lines = doc.splitTextToSize(subtitleText.slice(1).join("\n"), 180);
         doc.text(lines, 14, y);
@@ -885,10 +885,10 @@ function generateRiskDetails(doc, y, healthAreas) {
                 y = 20;
             }
             let suggestions = getDetailedSuggestions(key, riskLevel);
-            doc.setFont("helvetica", "bold");
+            doc.setFont("helvetica", "bold"); // FIXED FONT
             doc.text("How to Improve:", 14, y);
             y += 6;
-            doc.setFont("helvetica", "normal");
+            doc.setFont("helvetica", "normal"); // FIXED FONT
 
             let suggestionLines = doc.splitTextToSize(suggestions.join("\n"), 180);
             doc.text(suggestionLines, 14, y);
@@ -913,18 +913,18 @@ function generateRiskDetails(doc, y, healthAreas) {
 }
 
 function generatePDF() {
-    // Use fully qualified name for the most robust initialization
+    // Check for jsPDF availability
     if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
-        alert("FATAL ERROR: PDF libraries not found. Please check your index.html file.");
+        alert("FATAL ERROR: PDF libraries are not loaded correctly. Please check index.html script order.");
         console.error("jsPDF or jsPDF.jsPDF is undefined. Cannot generate PDF.");
         return;
     }
     
-    const doc = new window.jspdf.jsPDF(); 
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
     if (typeof doc.autoTable !== "function") {
         alert("Error: jsPDF AutoTable plugin is not loaded.");
-        console.error("jsPDF AutoTable is undefined. Cannot generate tables.");
         return;
     }
 
@@ -936,38 +936,61 @@ function generatePDF() {
     const overallHealthSuggestion = getOverallHealthSuggestion(score, riskStatus);
     const healthAreas = getHealthAreas();
 
-    // Start Content Generation (Now fully synchronous/immediate)
+    const logo = new Image();
+    // Assuming 'logo.png' is in the root directory
+    logo.src = "logo.png"; 
 
-    // Set document header font and colors
-    doc.setFont("helvetica", "bold"); // Standard Font Fix
-    doc.setTextColor(44, 62, 80); // Dark Blue/Gray
-    doc.setFontSize(16);
-    doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" });
+    const generateContent = function () {
+        // Set document header font and colors
+        doc.setFont("helvetica", "bold"); // FIXED FONT
+        doc.setTextColor(44, 62, 80); // Dark Blue/Gray
+        doc.setFontSize(16);
+        doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" });
 
-    // Date/Time
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Date: ${currentDate}`, 200, 15, { align: "right" });
-    doc.text(`Time: ${currentTime}`, 200, 22, { align: "right" });
+        // Add Logo - Use try/catch or a condition to handle load failure gracefully
+        try {
+            // Add image only if it loaded successfully (width/height > 0)
+            if (logo.width > 0 && logo.height > 0) {
+                doc.addImage(logo, "PNG", 10, 10, 65, 15);
+            }
+        } catch (e) {
+            console.warn("Could not add logo image to PDF:", e);
+        }
 
-    let y = 45;
-    // Reset text color to primary for body content
-    doc.setTextColor(44, 62, 80); 
+        // Date/Time
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Date: ${currentDate}`, 200, 15, { align: "right" });
+        doc.text(`Time: ${currentTime}`, 200, 22, { align: "right" });
 
-    // 1. Overall Summary (Includes BMI and Basic Profile)
-    y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y);
-    
-    // 2. Detailed NCD Risk Table 
-    y = generateNCDsRiskTable(doc, y);
+        let y = 45;
+        // Reset text color to primary for body content
+        doc.setTextColor(44, 62, 80); 
 
-    // 3. Health Area Risk Table
-    y = generateHealthRiskTable(doc, y, healthAreas);
+        // 1. Overall Summary (Includes BMI and Basic Profile)
+        y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y);
+        
+        // 2. Detailed NCD Risk Table (Request 2)
+        y = generateNCDsRiskTable(doc, y);
 
-    doc.addPage();
-    y = 20;
-    
-    // 4. Detailed Risk Recommendations 
-    y = generateRiskDetails(doc, y, healthAreas);
+        // 3. Health Area Risk Table
+        y = generateHealthRiskTable(doc, y, healthAreas);
 
-    doc.save("NIZCARE_Health_Scorecard.pdf");
+        doc.addPage();
+        y = 20;
+        
+        // 4. Detailed Risk Recommendations (Includes NCD Sub-Risks)
+        y = generateRiskDetails(doc, y, healthAreas);
+
+        doc.save("NIZCARE_Health_Scorecard.pdf");
+    };
+
+    // The logic to ensure 'generateContent' runs once the image is ready (or fails)
+    if (logo.complete) {
+        generateContent(); 
+    } else {
+        logo.onload = generateContent; 
+        // Important: Use onerror as a fallback so the PDF still generates even if the logo is missing/broken
+        logo.onerror = generateContent; 
+    }
 }
