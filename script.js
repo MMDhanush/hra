@@ -777,7 +777,7 @@ function generateNCDsRiskTable(doc, y) {
 
 
 function generateHealthRiskTable(doc, y, healthAreas) {
-    const ACCENT_COLOR = [44, 62, 80];
+    const ACCENT_COLOR = [29, 166, 154];
 
     doc.setFont("helvetica", "bold"); // FIXED FONT
     doc.text("Health Area Risk Levels", 105, y, { align: "center" });
@@ -806,7 +806,7 @@ function generateHealthRiskTable(doc, y, healthAreas) {
 }
 
 function generateRiskDetails(doc, y, healthAreas) {
-    const ACCENT_COLOR = [44, 62, 80];
+    const ACCENT_COLOR = [29, 166, 154];
     const ncdRisks = getNCDsDetailedRisk();
     
     // Combine detailed NCD risks with general health areas for the detailed page
