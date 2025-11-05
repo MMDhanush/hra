@@ -714,7 +714,8 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
         alternateRowStyles: { fillColor: [240, 240, 240] }
     });
     
-    let y = doc.autoTable.previous.finalY + 5;
+    // Adjusted spacing after the Overall Health Summary table
+    let y = doc.autoTable.previous.finalY + 12;
 
     doc.setFont("helvetica", "bold"); // FIXED FONT
     doc.text("Basic Profile:", 14, y);
@@ -724,7 +725,7 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
         startY: y,
         body: profileData,
         theme: "plain",
-        styles: { fontSize: 10, cellPadding: 2, font: "helvetica" }, // FIXED FONT
+        styles: { fontSize: 12, cellPadding: 2, font: "helvetica" }, // FIXED FONT
         columnStyles: { 0: { fontStyle: 'bold' }, 1: { halign: 'left' } }
     });
 
@@ -732,12 +733,13 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
 
     doc.setFont("helvetica", "bold"); // FIXED FONT
     doc.text("Overall Health Suggestions:", 14, y);
-    y += 6;
+    y += 8; // Increased space before the first suggestion
 
     doc.setFont("helvetica", "normal"); // FIXED FONT
+    // Adjusted spacing for suggestion points
     overallHealthSuggestion.forEach((suggestion) => {
         doc.text(`• ${suggestion}`, 14, y);
-        y += 6;
+        y += 8;
     });
 
     return y + 10;
@@ -970,15 +972,15 @@ function generatePDF() {
         // 1. Overall Summary (Includes BMI and Basic Profile)
         y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y);
         
-        // 2. Detailed NCD Risk Table (Request 2)
-        y = generateNCDsRiskTable(doc, y);
+        // --- REMOVED TABLES FROM FIRST PAGE AS REQUESTED ---
+        // 2. Detailed NCD Risk Table (Request 2) - REMOVED: y = generateNCDsRiskTable(doc, y);
 
-        // 3. Health Area Risk Table
-        y = generateHealthRiskTable(doc, y, healthAreas);
-
+        // 3. Health Area Risk Table - REMOVED: y = generateHealthRiskTable(doc, y, healthAreas);
+        
+        // Add a page break after the Summary and Suggestions section to start the detailed risk page
         doc.addPage();
         y = 20;
-        
+
         // 4. Detailed Risk Recommendations (Includes NCD Sub-Risks)
         y = generateRiskDetails(doc, y, healthAreas);
 
