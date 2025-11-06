@@ -15,6 +15,13 @@
             max-width: 600px;
             margin: 50px auto;
         }
+        /* NEW: Logo Image Styling */
+        .logo-image {
+            max-width: 250px; /* Adjust this value to change logo size */
+            height: auto;
+            display: block;
+            margin: 0 auto 20px auto; /* Center image and add space below */
+        }
         /* Custom Styles for Teal Theme (#1DA69A) */
         
         /* Title Font Color */
@@ -26,12 +33,12 @@
         .btn-custom-teal {
             background-color: #1DA69A; 
             border-color: #1DA69A; 
-            color: white !important; /* NEW: Sets text color to white */
+            color: white !important; 
         }
         .btn-custom-teal:hover {
-            background-color: #167d75; /* Slightly darker shade for hover */
+            background-color: #167d75; 
             border-color: #167d75;
-            color: white !important; /* NEW: Ensures text remains white on hover */
+            color: white !important; 
         }
 
         /* --- FOCUS/HIGHLIGHTING STYLES --- */
@@ -49,7 +56,7 @@
         select option:checked,
         select option:active {
             background-color: #1DA69A !important;
-            color: white !important; /* Ensure text is readable */
+            color: white !important; 
         }
 
         /* Change color of checked checkboxes/radio buttons fill color */
@@ -67,6 +74,8 @@
 <body>
     <div class="container mt-5">
         <div class="card shadow-lg p-4">
+            <img src="logo.png" alt="NIZCARE Health Logo" class="logo-image">
+
             <h1 class="text-center text-custom-teal">Health Risk Assessment</h1>
             <p class="text-center">Please complete the questionnaire to generate your personalized health scorecard.</p>
             
