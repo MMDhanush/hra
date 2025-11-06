@@ -173,10 +173,12 @@ function calculateBMI() {
         risk = "Low Risk - Healthy Weight";
     } else if (BMI < 18.5) {
         score = 0; // Underweight
-        risk = "At Risk - Underweight";
+        // UPDATED RISK MAPPING FOR BMI
+        risk = "Moderate Risk - Underweight"; // Changed "At Risk" to "Moderate Risk"
     } else if (BMI >= 25 && BMI <= 29.9) {
         score = 0; // Overweight
-        risk = "Moderate Risk - Overweight";
+        // UPDATED RISK MAPPING FOR BMI
+        risk = "Moderate Risk - Overweight"; // Changed "Moderate Risk" to "Moderate Risk"
     } else { // BMI >= 30
         score = 0; // Obese
         risk = "High Risk - Obese";
@@ -190,8 +192,9 @@ function getNCDsDetailedRisk() {
     // Scoring logic for risk determination (simplified to 3 levels: Low, Moderate, High)
     const riskMap = (rawScore, maxScore) => {
         const percentage = (rawScore / maxScore) * 100;
-        if (percentage >= 80) return "Low Risk";
-        if (percentage >= 50) return "Moderate Risk";
+        // NEW 3-LEVEL MAPPING: High (0-40), Moderate (41-70), Low (71-100)
+        if (percentage >= 71) return "Low Risk";
+        if (percentage >= 41) return "Moderate Risk";
         return "High Risk";
     };
 
@@ -295,12 +298,11 @@ function calculateHealthScore() {
 
     // 2.4. Determine Risk Status 
     let riskStatus;
-    if (score >= 81) {
-        riskStatus = "Low Risk"; // 81–100
-    } else if (score >= 61) {
-        riskStatus = "Moderate Risk"; // 61–80
+    // UPDATED: Mapping the 4 levels (81, 61, 41) to 3 levels (71, 41)
+    if (score >= 71) {
+        riskStatus = "Low Risk"; // 71–100
     } else if (score >= 41) {
-        riskStatus = "At Risk"; // 41–60
+        riskStatus = "Moderate Risk"; // 41–70 (Consolidates old Moderate/At Risk)
     } else {
         riskStatus = "High Risk"; // 0–40
     }
@@ -322,10 +324,14 @@ function getHealthAreas() {
 
     function determineRisk(parameter) {
         const paramScore = calculateParameterScore(parameter);
-        if (paramScore <= 2) return "High Risk";
-        if (paramScore <= 4) return "At Risk";
-        if (paramScore <= 7) return "Moderate Risk";
-        return "Low Risk";
+        // NEW 3-LEVEL MAPPING for 10-point scale: High (0-4), Moderate (5-7), Low (8-10)
+        // We will stick to the existing 4, 7, 10 logic but map them to the 3-tier names.
+        // Original logic was: High(0-2), At(3-4), Moderate(5-7), Low(8-10)
+        
+        // NEW 3-Level Mapping for 10-point scale
+        if (paramScore >= 8) return "Low Risk"; // Old Low Risk
+        if (paramScore >= 4) return "Moderate Risk"; // Old At Risk (3-4) + Old Moderate Risk (5-7) 
+        return "High Risk"; // Old High Risk (0-2)
     }
 
     return {
@@ -391,6 +397,7 @@ function calculateParameterScore(parameter) {
 }
 
 function getOverallHealthSuggestion(score, riskStatus) {
+    // UPDATED: Suggestions mapped to the new 3-level risk status
     if (riskStatus === "Low Risk") {
         return [
             "Healthy habits, maintain lifestyle & preventive care.",
@@ -399,17 +406,11 @@ function getOverallHealthSuggestion(score, riskStatus) {
         ];
     } else if (riskStatus === "Moderate Risk") {
         return [
-            "Some risk factors, consider targeted wellness interventions.",
-            "Focus on consistent physical activity and stress control to move to Low Risk.",
+            "Risk factors present; consider targeted wellness interventions and screenings.",
+            "Focus on consistent physical activity, balanced diet, and effective stress control.",
             "Identify your weakest areas (in the table below) for small, consistent changes."
         ];
-    } else if (riskStatus === "At Risk") {
-        return [
-            "Early warning, schedule preventive screenings & Nizcare programs.",
-            "Your responses indicate a need for immediate attention to lifestyle or stress concerns.",
-            "Book your annual preventive health checkup now and start targeted Nizcare programs."
-        ];
-    } else { // High Risk
+    } else { // High Risk (0-40)
         return [
             "Multiple risk factors; urgent attention and guided wellness plan recommended.",
             "Seek medical advice immediately to manage and mitigate critical risks.",
@@ -418,7 +419,7 @@ function getOverallHealthSuggestion(score, riskStatus) {
     }
 }
 
-// --- Generic Functions & Field Generation ---
+// --- Generic Functions & Field Generation (No changes needed) ---
 
 function generateField(field) {
     if (field.type === "select") {
@@ -583,20 +584,22 @@ function saveData(modalId) {
 // --- PDF Helper Functions (Keep only getRiskColor and Detailed Suggestions/Subtitles) ---
 
 function getRiskColor(riskLevel) {
+    // UPDATED: Adjusted logic to handle the new 3 risk levels (High, Moderate, Low)
     if (riskLevel.includes("High Risk") || riskLevel.includes("Obese")) return [255, 0, 0]; // Red
-    if (riskLevel.includes("At Risk") || riskLevel.includes("Underweight")) return [255, 128, 0]; // Orange
-    if (riskLevel.includes("Moderate Risk") || riskLevel.includes("Overweight")) return [139, 128, 0]; // Yellow
+    // Combine old "At Risk" (Orange) and "Moderate Risk" (Yellow) into one range. Using a Yellow-Orange color.
+    if (riskLevel.includes("Moderate Risk") || riskLevel.includes("Underweight") || riskLevel.includes("Overweight")) return [255, 165, 0]; // Orange
     return [0, 128, 0]; // Darker Green for Low Risk
 }
 
 function getRiskSubtitle(parameter, riskLevel) {
+    // UPDATED: Mapped old 4-level suggestions to the new 3-level structure.
     const subtitles = {
-        "Lifestyle & Habits": { "Low Risk": ["Great job!", "Maintain your excellent activity and diet habits."], "Moderate Risk": ["Focus on Diet", "Increase fruit/veg and reduce processed food intake."], "At Risk": ["Urgent Change Needed", "Address tobacco/alcohol use and increase daily exercise."], "High Risk": ["Critical Risk", "Immediate intervention needed across all habits."] },
-        "Physical Health & NCD Risk": { "Low Risk": ["Excellent Screening", "Low risk for major NCDs. Maintain vigilance."], "Moderate Risk": ["Monitor Vitals", "Pay attention to any symptoms (thirst, pain) and schedule a checkup."], "At Risk": ["Screening Required", "High-risk factors present. Consult a doctor for targeted NCD screening (CVDs (Heart Diseases), Diabetes)."], "High Risk": ["Immediate Medical Care", "Known high BP/Sugar or multiple severe symptoms require urgent specialist consultation."] },
-        "Mental & Emotional Wellbeing": { "Low Risk": ["Excellent Balance", "You cope well with stress. Keep up relaxation techniques."], "Moderate Risk": ["Need for Breaks", "Stress and balance are slipping. Prioritize time for relaxation and coping strategies."], "At Risk": ["Professional Support", "Persistent sadness or frequent anxiety is present. Seek professional counseling."], "High Risk": ["Crisis Point", "High distress/burnout indicated. Urgent mental health support is critical."] },
-        "Preventive Health & Awareness": { "Low Risk": ["Proactive Care", "You are aware of your vitals and up-to-date on checkups."], "Moderate Risk": ["Annual Checkup Due", "If >1 year since last checkup, schedule one immediately. Know your numbers."], "At Risk": ["High Unawareness", "Lack of recent checkups AND unawareness of vitals. Requires urgent screening."], "High Risk": ["Mandatory Screening", "No awareness and no checkups. Requires immediate comprehensive health screening."] },
-        "Sleep & Fatigue": { "Low Risk": ["Restorative Sleep", "Consistent 7-8 hours of quality sleep. This aids recovery."], "Moderate Risk": ["Improve Hygiene", "Sleep is inconsistent or tiredness is sometimes present. Reduce screen time before bed."], "At Risk": ["Chronic Fatigue", "Low average sleep and constant tiredness. Requires medical input for sleep quality."], "High Risk": ["Severe Sleep Debt", "Chronic sleep deprivation. Address underlying cause (stress/sleep disorder) immediately."] },
-        "Digital & Social Wellness": { "Low Risk": ["Balanced Life", "Low screen time, strong social and offline connections."], "Moderate Risk": ["Reduce Screen Time", "Cut back on non-work screen time and ensure one offline hobby per week."], "At Risk": ["Risk of Isolation", "High screen use and poor social connections. Actively seek social engagement and outdoor time."], "High Risk": ["Digital Overload", "Severe screen addiction/social isolation. Seek help to rebalance digital and real-world life."] },
+        "Lifestyle & Habits": { "Low Risk": ["Great job!", "Maintain your excellent activity and diet habits."], "Moderate Risk": ["Focus on Diet/Activity", "Increase physical activity and reduce processed food intake."], "High Risk": ["Critical Risk", "Immediate intervention needed across all habits."] },
+        "Physical Health & NCD Risk": { "Low Risk": ["Excellent Screening", "Low risk for major NCDs. Maintain vigilance."], "Moderate Risk": ["Monitor & Screen", "Pay attention to any symptoms and schedule a preventive health checkup."], "High Risk": ["Immediate Medical Care", "Known high BP/Sugar or multiple severe symptoms require urgent specialist consultation."] },
+        "Mental & Emotional Wellbeing": { "Low Risk": ["Excellent Balance", "You cope well with stress. Keep up relaxation techniques."], "Moderate Risk": ["Need for Focus", "Stress and balance are slipping. Prioritize time for relaxation and coping strategies."], "High Risk": ["Crisis Point", "High distress/burnout indicated. Urgent mental health support is critical."] },
+        "Preventive Health & Awareness": { "Low Risk": ["Proactive Care", "You are aware of your vitals and up-to-date on checkups."], "Moderate Risk": ["Checkup and Awareness Due", "If >1 year since last checkup, schedule one immediately. Know your numbers."], "High Risk": ["Mandatory Screening", "No awareness and no checkups. Requires immediate comprehensive health screening."] },
+        "Sleep & Fatigue": { "Low Risk": ["Restorative Sleep", "Consistent 7-8 hours of quality sleep. This aids recovery."], "Moderate Risk": ["Improve Hygiene", "Sleep is inconsistent or tiredness is present. Reduce screen time before bed."], "High Risk": ["Severe Sleep Debt", "Chronic sleep deprivation. Address underlying cause immediately."] },
+        "Digital & Social Wellness": { "Low Risk": ["Balanced Life", "Low screen time, strong social and offline connections."], "Moderate Risk": ["Reduce Screen Time", "Cut back on non-work screen time and ensure regular offline hobbies and social engagement."], "High Risk": ["Digital Overload", "Severe screen addiction/social isolation. Seek help to rebalance digital and real-world life."] },
         
         // Detailed NCD Risk Subtitles
         "CVD Risk (Heart)": { "Low Risk": ["On Track", "Your current lifestyle and medical responses indicate a low risk for this condition. Maintain vigilance."], "Moderate Risk": ["Monitor Closely", "Minor risk factors identified. Schedule a screening test (e.g., BP/Cholesterol) for baseline data."], "High Risk": ["URGENT INTERVENTION", "Known diagnosis or multiple severe symptoms/high-risk factors. Seek immediate medical attention."] },
@@ -605,6 +608,7 @@ function getRiskSubtitle(parameter, riskLevel) {
     };
     
     // Use includes for flexible risk mapping
+    // This logic ensures 'At Risk', 'Moderate Risk', 'Underweight', 'Overweight' all map to the new 'Moderate Risk' for subtitle look-up
     const simpleRisk = riskLevel.includes("High Risk") || riskLevel.includes("Obese") ? "High Risk" : (riskLevel.includes("Moderate Risk") || riskLevel.includes("At Risk") || riskLevel.includes("Underweight") || riskLevel.includes("Overweight") ? "Moderate Risk" : "Low Risk");
 
     if (subtitles[parameter] && subtitles[parameter][simpleRisk]) {
@@ -616,6 +620,7 @@ function getRiskSubtitle(parameter, riskLevel) {
 }
 
 function getDetailedSuggestions(parameter, riskLevel) {
+    // UPDATED: Mapped old 4-level suggestions to the new 3-level structure.
     const suggestions = {
         "CVD Risk (Heart)": { 
             "Low Risk": ["• Maintain your healthy blood pressure and cholesterol levels with diet and exercise.", "• Regular physical activity (30 min, 5 days/week) is key to cardiovascular health."],
@@ -665,6 +670,7 @@ function getDetailedSuggestions(parameter, riskLevel) {
         }
     };
     
+    // This logic ensures 'At Risk', 'Moderate Risk', 'Underweight', 'Overweight' all map to the new 'Moderate Risk' for suggestion look-up
     const simpleRisk = riskLevel.includes("High Risk") || riskLevel.includes("Obese") ? "High Risk" : (riskLevel.includes("Moderate Risk") || riskLevel.includes("At Risk") || riskLevel.includes("Underweight") || riskLevel.includes("Overweight") ? "Moderate Risk" : "Low Risk");
 
     if (suggestions[parameter] && suggestions[parameter][simpleRisk]) {
@@ -675,7 +681,7 @@ function getDetailedSuggestions(parameter, riskLevel) {
 }
 
 
-// --- 5. PDF GENERATION FUNCTIONS ---
+// --- 5. PDF GENERATION FUNCTIONS (No changes needed, as the function logic uses the 3-level output) ---
 
 function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     const ACCENT_COLOR = [29, 166, 154]; 
