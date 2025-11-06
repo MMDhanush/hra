@@ -324,10 +324,6 @@ function getHealthAreas() {
 
     function determineRisk(parameter) {
         const paramScore = calculateParameterScore(parameter);
-        // NEW 3-LEVEL MAPPING for 10-point scale: High (0-4), Moderate (5-7), Low (8-10)
-        // We will stick to the existing 4, 7, 10 logic but map them to the 3-tier names.
-        // Original logic was: High(0-2), At(3-4), Moderate(5-7), Low(8-10)
-        
         // NEW 3-Level Mapping for 10-point scale
         if (paramScore >= 8) return "Low Risk"; // Old Low Risk
         if (paramScore >= 4) return "Moderate Risk"; // Old At Risk (3-4) + Old Moderate Risk (5-7) 
@@ -681,7 +677,7 @@ function getDetailedSuggestions(parameter, riskLevel) {
 }
 
 
-// --- 5. PDF GENERATION FUNCTIONS (No changes needed, as the function logic uses the 3-level output) ---
+// --- 5. PDF GENERATION FUNCTIONS (Modified generateRiskDetails for the fix) ---
 
 function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     const ACCENT_COLOR = [29, 166, 154]; 
@@ -751,7 +747,155 @@ function generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion) {
     return y + 10;
 }
 
-// Request 2: New function to generate the NCD-focused risk scoring table
+
+// FIX APPLIED HERE: Removed the final unnecessary doc.addPage() check from the loop.
+function generateRiskDetails(doc, y, healthAreas) {
+    const ACCENT_COLOR = [29, 166, 154];
+    const ncdRisks = getNCDsDetailedRisk();
+    
+    // Combine detailed NCD risks with general health areas for the detailed page
+    const orderedKeys = [
+        "CVD Risk (Heart)", 
+        "Diabetes Risk", 
+        "Obesity / Metabolic Syndrome",
+        "Lifestyle & Habits", 
+        "Mental & Emotional Wellbeing",
+        "Sleep & Fatigue", 
+        "Digital & Social Wellness",
+        "Preventive Health & Awareness"
+    ];
+
+    const allAreas = {...ncdRisks, ...healthAreas};
+    
+    orderedKeys.forEach((key, index) => { // Use index to know if it's the last item
+        const item = allAreas[key];
+        if (!item) return;
+
+        // Check 1: Page break before starting a new area section
+        if (y > doc.internal.pageSize.height - 60) {
+            doc.addPage();
+            y = 20;
+        }
+
+        let isNCDDetail = ncdRisks.hasOwnProperty(key);
+        let riskLevel = isNCDDetail ? item.risk : item;
+        let riskScore = isNCDDetail ? `${item.score}/${item.max}` : `${calculateParameterScore(key)}/10`;
+        let subtitleText = getRiskSubtitle(key, riskLevel);
+        let riskColor = getRiskColor(riskLevel);
+
+        doc.setFont("helvetica", "bold"); // FIXED FONT
+        doc.setFontSize(12);
+        doc.text(key, 14, y);
+        y += 6;
+
+        // Check 2: Page break before table
+        if (y > doc.internal.pageSize.height - 50) {
+            doc.addPage();
+            y = 20;
+        }
+        
+        doc.autoTable({
+            startY: y,
+            head: [["Metric", "Value"]],
+            body: [
+                ["Risk Score", riskScore],
+                ["Risk Level", { content: riskLevel, styles: { textColor: riskColor, fontStyle: 'bold' } }],
+                ...(key.includes("Obesity") ? [["BMI", calculateBMI().bmi + ' kg/m²']] : [])
+            ],
+            theme: "grid",
+            headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
+            styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
+            alternateRowStyles: { fillColor: [240, 240, 240] }
+        });
+
+        y = doc.autoTable.previous.finalY + 10;
+
+        // Check 3: Page break before subtitles
+        if (y > doc.internal.pageSize.height - 50) {
+            doc.addPage();
+            y = 20;
+        }
+        
+        doc.setFont("helvetica", "bold"); // FIXED FONT
+        doc.text(subtitleText[0], 14, y);
+        y += 6;
+        doc.setFont("helvetica", "normal"); // FIXED FONT
+
+        let lines = doc.splitTextToSize(subtitleText.slice(1).join("\n"), 180);
+        doc.text(lines, 14, y);
+        y += lines.length * 6 + 10;
+
+        // Show improvement suggestions if not Low Risk
+        if (!riskLevel.includes("Low Risk") && !riskLevel.includes("Healthy Weight")) { 
+            // Check 4: Page break before suggestions
+            if (y > doc.internal.pageSize.height - 50) {
+                doc.addPage();
+                y = 20;
+            }
+            let suggestions = getDetailedSuggestions(key, riskLevel);
+            doc.setFont("helvetica", "bold"); // FIXED FONT
+            doc.text("How to Improve:", 14, y);
+            y += 6;
+            doc.setFont("helvetica", "normal"); // FIXED FONT
+
+            let suggestionLines = doc.splitTextToSize(suggestions.join("\n"), 180);
+            doc.text(suggestionLines, 14, y);
+            y += suggestionLines.length * 6 + 10;
+        }
+
+        // Horizontal line separator (Only draw if it's NOT the last item)
+        if (index < orderedKeys.length - 1) {
+            // Only draw line if there's enough space
+            if (y < doc.internal.pageSize.height - 20) {
+                doc.setDrawColor(150, 150, 150);
+                doc.setLineWidth(0.5);
+                doc.line(10, y, 200, y);
+                y += 10;
+            }
+        }
+        
+        // REMOVED FINAL CHECK (THE CULPRIT) HERE to prevent a blank page addition for the very last item.
+
+        if (y > doc.internal.pageSize.height - 50) { // This will only be reached if the line drawing pushed it over
+             if (index < orderedKeys.length - 1) { // Only add page if more content follows
+                doc.addPage();
+                y = 20;
+            }
+        }
+    });
+
+    return y;
+}
+
+function generateHealthRiskTable(doc, y, healthAreas) {
+    const ACCENT_COLOR = [29, 166, 154];
+
+    doc.setFont("helvetica", "bold"); // FIXED FONT
+    doc.text("Health Area Risk Levels", 105, y, { align: "center" });
+
+    y += 8;
+
+    let healthData = Object.entries(healthAreas).map(([key, value]) => [
+        key,
+        {
+            content: value,
+            styles: { textColor: getRiskColor(value) }
+        }
+    ]);
+
+    doc.autoTable({
+        startY: y,
+        head: [["Health Area", "Risk Level"]],
+        body: healthData,
+        theme: "grid",
+        headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
+        alternateRowStyles: { fillColor: [240, 240, 240] }
+    });
+
+    return doc.autoTable.previous.finalY + 10;
+}
+
 function generateNCDsRiskTable(doc, y) {
     const ACCENT_COLOR = [29, 166, 154];
     const ncdRisks = getNCDsDetailedRisk();
@@ -783,142 +927,6 @@ function generateNCDsRiskTable(doc, y) {
     return doc.autoTable.previous.finalY + 10;
 }
 
-
-function generateHealthRiskTable(doc, y, healthAreas) {
-    const ACCENT_COLOR = [29, 166, 154];
-
-    doc.setFont("helvetica", "bold"); // FIXED FONT
-    doc.text("Health Area Risk Levels", 105, y, { align: "center" });
-
-    y += 8;
-
-    let healthData = Object.entries(healthAreas).map(([key, value]) => [
-        key,
-        {
-            content: value,
-            styles: { textColor: getRiskColor(value) }
-        }
-    ]);
-
-    doc.autoTable({
-        startY: y,
-        head: [["Health Area", "Risk Level"]],
-        body: healthData,
-        theme: "grid",
-        headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-        styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
-        alternateRowStyles: { fillColor: [240, 240, 240] }
-    });
-
-    return doc.autoTable.previous.finalY + 10;
-}
-
-function generateRiskDetails(doc, y, healthAreas) {
-    const ACCENT_COLOR = [29, 166, 154];
-    const ncdRisks = getNCDsDetailedRisk();
-    
-    // Combine detailed NCD risks with general health areas for the detailed page
-    const orderedKeys = [
-        "CVD Risk (Heart)", 
-        "Diabetes Risk", 
-        "Obesity / Metabolic Syndrome",
-        "Lifestyle & Habits", 
-        "Mental & Emotional Wellbeing",
-        "Sleep & Fatigue", 
-        "Digital & Social Wellness",
-        "Preventive Health & Awareness"
-    ];
-
-    const allAreas = {...ncdRisks, ...healthAreas};
-    
-    orderedKeys.forEach((key) => {
-        const item = allAreas[key];
-        if (!item) return;
-
-        if (y > doc.internal.pageSize.height - 60) {
-            doc.addPage();
-            y = 20;
-        }
-
-        let isNCDDetail = ncdRisks.hasOwnProperty(key);
-        let riskLevel = isNCDDetail ? item.risk : item;
-        let riskScore = isNCDDetail ? `${item.score}/${item.max}` : `${calculateParameterScore(key)}/10`;
-        let subtitleText = getRiskSubtitle(key, riskLevel);
-        let riskColor = getRiskColor(riskLevel);
-
-        doc.setFont("helvetica", "bold"); // FIXED FONT
-        doc.setFontSize(12);
-        doc.text(key, 14, y);
-        y += 6;
-
-        if (y > doc.internal.pageSize.height - 50) {
-            doc.addPage();
-            y = 20;
-        }
-        
-        doc.autoTable({
-            startY: y,
-            head: [["Metric", "Value"]],
-            body: [
-                ["Risk Score", riskScore],
-                ["Risk Level", { content: riskLevel, styles: { textColor: riskColor, fontStyle: 'bold' } }],
-                ...(key.includes("Obesity") ? [["BMI", calculateBMI().bmi + ' kg/m²']] : [])
-            ],
-            theme: "grid",
-            headStyles: { fillColor: ACCENT_COLOR, textColor: 255, fontStyle: 'bold' },
-            styles: { fontSize: 12, halign: "center", font: "helvetica" }, // FIXED FONT
-            alternateRowStyles: { fillColor: [240, 240, 240] }
-        });
-
-        y = doc.autoTable.previous.finalY + 10;
-
-        if (y > doc.internal.pageSize.height - 50) {
-            doc.addPage();
-            y = 20;
-        }
-        
-        doc.setFont("helvetica", "bold"); // FIXED FONT
-        doc.text(subtitleText[0], 14, y);
-        y += 6;
-        doc.setFont("helvetica", "normal"); // FIXED FONT
-
-        let lines = doc.splitTextToSize(subtitleText.slice(1).join("\n"), 180);
-        doc.text(lines, 14, y);
-        y += lines.length * 6 + 10;
-
-        // Show improvement suggestions if not Low Risk
-        if (!riskLevel.includes("Low Risk") && !riskLevel.includes("Healthy Weight")) { 
-            if (y > doc.internal.pageSize.height - 50) {
-                doc.addPage();
-                y = 20;
-            }
-            let suggestions = getDetailedSuggestions(key, riskLevel);
-            doc.setFont("helvetica", "bold"); // FIXED FONT
-            doc.text("How to Improve:", 14, y);
-            y += 6;
-            doc.setFont("helvetica", "normal"); // FIXED FONT
-
-            let suggestionLines = doc.splitTextToSize(suggestions.join("\n"), 180);
-            doc.text(suggestionLines, 14, y);
-            y += suggestionLines.length * 6 + 10;
-        }
-
-        // Horizontal line separator
-        if (y < doc.internal.pageSize.height - 20) {
-            doc.setDrawColor(150, 150, 150);
-            doc.setLineWidth(0.5);
-            doc.line(10, y, 200, y);
-            y += 10;
-        }
-
-        if (y > doc.internal.pageSize.height - 50) {
-            doc.addPage();
-            y = 20;
-        }
-    });
-
-    return y;
-}
 
 function generatePDF() {
     // Check for jsPDF availability
@@ -977,11 +985,6 @@ function generatePDF() {
 
         // 1. Overall Summary (Includes BMI and Basic Profile)
         y = generateSummaryTable(doc, score, riskStatus, overallHealthSuggestion, y);
-        
-        // --- REMOVED TABLES FROM FIRST PAGE AS REQUESTED ---
-        // 2. Detailed NCD Risk Table (Request 2) - REMOVED: y = generateNCDsRiskTable(doc, y);
-
-        // 3. Health Area Risk Table - REMOVED: y = generateHealthRiskTable(doc, y, healthAreas);
         
         // Add a page break after the Summary and Suggestions section to start the detailed risk page
         doc.addPage();
