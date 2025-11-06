@@ -133,7 +133,7 @@ sections.forEach((section, index) => {
                     </div>
                     <div class="modal-footer">
                         ${index > 0 ? `<button class="btn btn-secondary" onclick="prevModal('${section.id}', '${sections[index - 1].id}')">Back</button>` : ""}
-                        ${section.final ? `<button class="btn btn-success" onclick="validateAndGeneratePDF()">Submit & Generate PDF</button>` : `<button class="btn btn-primary" onclick="validateAndNext('${section.id}', '${sections[index + 1].id}')">Next</button>`}
+                        ${section.final ? `<button class="btn btn-custom-teal" onclick="validateAndGeneratePDF()">Submit & Generate PDF</button>` : `<button class="btn btn-custom-teal" onclick="validateAndNext('${section.id}', '${sections[index + 1].id}')">Next</button>`}
                     </div>
                 </div>
             </div>
@@ -959,7 +959,7 @@ function generatePDF() {
     const generateContent = function () {
         // Set document header font and colors
         doc.setFont("helvetica", "bold"); // FIXED FONT
-        doc.setTextColor(44, 62, 80); // Dark Blue/Gray
+        doc.setTextColor(0, 0, 0); // Dark Blue/Gray
         doc.setFontSize(16);
         doc.text("NIZCARE HEALTH RISK ASSESSMENT", 105, 35, { align: "center" });
 

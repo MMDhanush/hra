@@ -15,15 +15,62 @@
             max-width: 600px;
             margin: 50px auto;
         }
+        /* Custom Styles for Teal Theme (#1DA69A) */
+        
+        /* Title Font Color */
+        .text-custom-teal {
+            color: #1DA69A !important;
+        }
+
+        /* Start, Next, and Submit Button Background Color */
+        .btn-custom-teal {
+            background-color: #1DA69A; 
+            border-color: #1DA69A; 
+            color: white !important; /* NEW: Sets text color to white */
+        }
+        .btn-custom-teal:hover {
+            background-color: #167d75; /* Slightly darker shade for hover */
+            border-color: #167d75;
+            color: white !important; /* NEW: Ensures text remains white on hover */
+        }
+
+        /* --- FOCUS/HIGHLIGHTING STYLES --- */
+        /* Outer border and shadow for all form controls (select, input, number) on focus */
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #1DA69A;
+            /* Box shadow uses the color #1DA69A with 25% opacity */
+            box-shadow: 0 0 0 0.25rem rgba(29, 166, 154, 0.25); 
+        }
+        
+        /* Change background color of options when cursor hovers or when selected/focused */
+        select option:hover,
+        select option:focus,
+        select option:checked,
+        select option:active {
+            background-color: #1DA69A !important;
+            color: white !important; /* Ensure text is readable */
+        }
+
+        /* Change color of checked checkboxes/radio buttons fill color */
+        .form-check-input:checked {
+            background-color: #1DA69A;
+            border-color: #1DA69A;
+        }
+
+        /* Change focus shadow for checkboxes/radio buttons */
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(29, 166, 154, 0.25);
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <div class="card shadow-lg p-4">
-            <h1 class="text-center text-primary">Health Risk Assessment</h1>
+            <h1 class="text-center text-custom-teal">Health Risk Assessment</h1>
             <p class="text-center">Please complete the questionnaire to generate your personalized health scorecard.</p>
             
-            <button class="btn btn-primary btn-lg mx-auto d-block" onclick="openModal('modal1')">
+            <button class="btn btn-custom-teal btn-lg mx-auto d-block" onclick="openModal('modal1')">
                 Start Assessment
             </button>
         </div>
