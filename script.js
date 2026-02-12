@@ -1009,36 +1009,38 @@ function generatePDF() {
 }
 
 async function submitDataToSheets(score, riskStatus, healthAreas) {
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbydZG-1D7_PSlrm50jvSk5SVT82LtuzOSaRoR70MSeN22KNvXy8RJmndF-90I7NtAPT0g/exec"; // Update with your deployment URL
+    const GOOGLE_SHEET_URL = "PASTE_YOUR_NEW_DEPLOY_URL_HERE";
 
     try {
-        // Map the data for your analytics
-        const ncdRisks = getNCDsDetailedRisk(); // This function already exists in your script
-        
+        // Get the specific NCD risks using your existing internal function
+        const ncdDetails = getNCDsDetailedRisk(); 
+        const bmiData = calculateBMI();
+
         const finalPayload = {
-            ...formData, // Basic profile data
+            // Basic Profile from your formData object
+            ...formData, 
+            bmi: bmiData.bmi,
             overallScore: score,
             riskStatus: riskStatus,
-            bmi: calculateBMI().bmi,
-            // Individual Risk Levels for analytics
-            heartRisk: ncdRisks["CVD Risk (Heart)"].risk,
-            diabetesRisk: ncdRisks["Diabetes Risk"].risk,
-            metabolicRisk: ncdRisks["Obesity / Metabolic Syndrome"].risk,
-            lifestyleRisk: healthAreas["Lifestyle & Habits"],
-            mentalRisk: healthAreas["Mental & Emotional Wellbeing"],
-            sleepRisk: healthAreas["Sleep & Fatigue"]
+            
+            // Segregated NCD Risks
+            heartRisk: ncdDetails["CVD Risk (Heart)"].risk,
+            diabetesRisk: ncdDetails["Diabetes Risk"].risk,
+            metabolicRisk: ncdDetails["Obesity / Metabolic Syndrome"].risk,
+            
+            // Segregated Lifestyle/Mental Risks from healthAreas
+            lifestyleRisk: healthAreas.find(a => a.title.includes("Lifestyle"))?.level || "N/A",
+            mentalRisk: healthAreas.find(a => a.title.includes("Mental"))?.level || "N/A",
+            sleepRisk: healthAreas.find(a => a.title.includes("Sleep"))?.level || "N/A"
         };
 
         await fetch(GOOGLE_SHEET_URL, {
             method: "POST",
-            mode: "no-cors", 
+            mode: "no-cors",
             headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(finalPayload)
         });
-        
-        console.log("Data sent to Analytics Sheet successfully.");
     } catch (error) {
-        // This prevents the error from stopping the PDF generation
-        console.error("Sheet Sync Failed, but PDF will continue:", error);
+        console.error("Analytics Sync Error:", error);
     }
 }
