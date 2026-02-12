@@ -1009,7 +1009,7 @@ function generatePDF() {
 }
 
 async function submitDataToSheets(score, riskStatus, healthAreas) {
-    const GOOGLE_SHEET_URL = "PASTE_YOUR_NEW_DEPLOY_URL_HERE";
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwmPiY880LQFfRdVnFF3nMlLpXggC9PszGRegGxCvqAn0C2Yhq2dFl_TRiGJthj3xd0zQ/exec";
 
     try {
         // Get the specific NCD risks using your existing internal function
