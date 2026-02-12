@@ -1009,8 +1009,8 @@ function generatePDF() {
 }
 
 async function submitDataToSheets(score, riskStatus, healthAreas) {
-    // PASTE YOUR NEWEST URL HERE
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwYmr4JQrVKcnwpfN0WUKbeW5uodruVsNnZGq0kez_JlE8H6Mgaa95RCyATHyO4HQ7HLg/exec"; 
+    // PASTE YOUR LATEST DEPLOYMENT URL HERE
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyUfGsoQivKL55GB-LbneVfa7oZb5MSEK5Okfm5LyaDCMy9k1ktVVeKuUBRTqr-kbZwqw/exec"; 
 
     try {
         const ncdDetails = getNCDsDetailedRisk(); 
@@ -1029,18 +1029,18 @@ async function submitDataToSheets(score, riskStatus, healthAreas) {
             sleepRisk: healthAreas.find(a => a.title.includes("Sleep"))?.level || "N/A"
         };
 
-        // This specific fetch configuration is the "Magic Fix" for Google Sheets
+        // We use 'text/plain' and 'no-cors' to bypass the browser's security block
         await fetch(GOOGLE_SHEET_URL, {
             method: "POST",
-            mode: "no-cors", // Tells browser not to worry about security headers
+            mode: "no-cors", 
             headers: {
-                "Content-Type": "text/plain;charset=utf-8" // Bypasses Pre-flight
+                "Content-Type": "text/plain;charset=utf-8"
             },
             body: JSON.stringify(finalPayload)
         });
         
-        console.log("Data sent successfully!");
+        console.log("Sync request sent to Google Sheets.");
     } catch (error) {
-        console.error("Data could not be sent:", error);
+        console.error("Manual Sync Error:", error);
     }
 }
