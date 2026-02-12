@@ -952,7 +952,7 @@ function generatePDF() {
     const overallHealthSuggestion = getOverallHealthSuggestion(score, riskStatus);
     const healthAreas = getHealthAreas();
 
-    submitDataToSheets(score, riskStatus);
+    submitDataToSheets(score, riskStatus, healthAreas);
 
     const logo = new Image();
     // Assuming 'logo.png' is in the root directory
@@ -1008,28 +1008,33 @@ function generatePDF() {
     }
 }
 
-// --- GOOGLE SHEETS INTEGRATION ---
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx497ZNZxmDS6Hqid1WtvK1n4SErKuvd3jbXAe8XCiZwM7ZKsyfckHw9CGFlyzeNgk07w/exec";
+function submitDataToSheets(score, riskStatus, healthAreas) {
+    // Extract specific risk levels from the healthAreas array
+    const ncdRisks = {};
+    healthAreas.forEach(area => {
+        // This maps the 'area' titles from your script logic to keys for the sheet
+        if (area.title.includes("Heart")) ncdRisks.heart = area.level;
+        if (area.title.includes("Diabetes")) ncdRisks.diabetes = area.level;
+        if (area.title.includes("Respiratory")) ncdRisks.respiratory = area.level;
+        if (area.title.includes("Cancer")) ncdRisks.cancer = area.level;
+    });
 
-function submitDataToSheets(score, riskStatus) {
-    // Combine basic profile data with the calculated results
     const finalPayload = {
         ...formData,
         overallScore: score,
         riskStatus: riskStatus,
         bmi: calculateBMI().bmi,
-        timestamp: new Date().toLocaleString()
+        ncdRisks: ncdRisks,
+        // Adding other assessment categories for better analytics
+        lifestyleScore: healthAreas.find(a => a.title.includes("Lifestyle"))?.level || "N/A",
+        mentalWellbeing: healthAreas.find(a => a.title.includes("Mental"))?.level || "N/A",
+        sleepQuality: healthAreas.find(a => a.title.includes("Sleep"))?.level || "N/A",
+        digitalWellness: healthAreas.find(a => a.title.includes("Digital"))?.level || "N/A"
     };
 
-    fetch(GOOGLE_SHEET_URL, {
+    fetch("https://script.google.com/macros/s/AKfycbydZG-1D7_PSlrm50jvSk5SVT82LtuzOSaRoR70MSeN22KNvXy8RJmndF-90I7NtAPT0g/exec", {
         method: "POST",
-        mode: "no-cors", // Required for Google Apps Script cross-origin requests
-        cache: "no-cache",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(finalPayload),
-    })
-    .then(() => console.log("Data sent to Google Sheets successfully"))
-    .catch((error) => console.error("Error sending data to Sheets:", error));
+        mode: "no-cors",
+        body: JSON.stringify(finalPayload)
+    });
 }
