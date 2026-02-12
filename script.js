@@ -952,6 +952,8 @@ function generatePDF() {
     const overallHealthSuggestion = getOverallHealthSuggestion(score, riskStatus);
     const healthAreas = getHealthAreas();
 
+    submitDataToSheets(score, riskStatus);
+
     const logo = new Image();
     // Assuming 'logo.png' is in the root directory
     logo.src = "logo.png"; 
@@ -1004,4 +1006,30 @@ function generatePDF() {
         // Important: Use onerror as a fallback so the PDF still generates even if the logo is missing/broken
         logo.onerror = generateContent; 
     }
+}
+
+// --- GOOGLE SHEETS INTEGRATION ---
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbx497ZNZxmDS6Hqid1WtvK1n4SErKuvd3jbXAe8XCiZwM7ZKsyfckHw9CGFlyzeNgk07w/exec";
+
+function submitDataToSheets(score, riskStatus) {
+    // Combine basic profile data with the calculated results
+    const finalPayload = {
+        ...formData,
+        overallScore: score,
+        riskStatus: riskStatus,
+        bmi: calculateBMI().bmi,
+        timestamp: new Date().toLocaleString()
+    };
+
+    fetch(GOOGLE_SHEET_URL, {
+        method: "POST",
+        mode: "no-cors", // Required for Google Apps Script cross-origin requests
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(finalPayload),
+    })
+    .then(() => console.log("Data sent to Google Sheets successfully"))
+    .catch((error) => console.error("Error sending data to Sheets:", error));
 }
