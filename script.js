@@ -1009,38 +1009,42 @@ function generatePDF() {
 }
 
 async function submitDataToSheets(score, riskStatus, healthAreas) {
-    // PASTE YOUR LATEST DEPLOYMENT URL HERE
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyUfGsoQivKL55GB-LbneVfa7oZb5MSEK5Okfm5LyaDCMy9k1ktVVeKuUBRTqr-kbZwqw/exec"; 
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyNylVOvegMLX-adcoGxU0jvzR5Y854cvK34GDz4g_3Jc8fFvypS0PEmFtd9FWUm12KvA/exec"; 
 
     try {
         const ncdDetails = getNCDsDetailedRisk(); 
         const bmiData = calculateBMI();
+
+        // This helper function finds the correct risk level from your healthAreas array
+        const findLvl = (str) => healthAreas.find(a => a.title.includes(str))?.level || "N/A";
 
         const finalPayload = {
             ...formData, 
             bmi: bmiData.bmi,
             overallScore: score,
             riskStatus: riskStatus,
-            heartRisk: ncdDetails["CVD Risk (Heart)"].risk,
-            diabetesRisk: ncdDetails["Diabetes Risk"].risk,
-            metabolicRisk: ncdDetails["Obesity / Metabolic Syndrome"].risk,
-            lifestyleRisk: healthAreas.find(a => a.title.includes("Lifestyle"))?.level || "N/A",
-            mentalRisk: healthAreas.find(a => a.title.includes("Mental"))?.level || "N/A",
-            sleepRisk: healthAreas.find(a => a.title.includes("Sleep"))?.level || "N/A"
+            // Mapping specific NCDs
+            heartRisk: ncdDetails["CVD Risk (Heart)"]?.risk || "N/A",
+            diabetesRisk: ncdDetails["Diabetes Risk"]?.risk || "N/A",
+            respiratoryRisk: ncdDetails["Respiratory Risk (Lung)"]?.risk || "N/A",
+            metabolicRisk: ncdDetails["Obesity / Metabolic Syndrome"]?.risk || "N/A",
+            // Mapping Wellness Sections
+            lifestyle: findLvl("Lifestyle"),
+            mental: findLvl("Mental"),
+            sleep: findLvl("Sleep"),
+            digital: findLvl("Digital"),
+            preventive: findLvl("Preventive")
         };
 
-        // We use 'text/plain' and 'no-cors' to bypass the browser's security block
         await fetch(GOOGLE_SHEET_URL, {
             method: "POST",
             mode: "no-cors", 
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8"
-            },
+            headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(finalPayload)
         });
         
-        console.log("Sync request sent to Google Sheets.");
-    } catch (error) {
-        console.error("Manual Sync Error:", error);
+        console.log("Analytics data sent to Google Sheets.");
+    } catch (e) {
+        console.error("Sync error:", e);
     }
 }
