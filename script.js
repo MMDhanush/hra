@@ -1010,7 +1010,7 @@ function generatePDF() {
 
 async function submitDataToSheets(score, riskStatus, healthAreas) {
     // PASTE YOUR NEWEST URL HERE
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxXFf_0ef2jinjN1ogHYL5M5jr-T7gWfsGJMZ2vO2GLRRdZtpb24ZwE_3pwuEzn7vPd1Q/exec"; 
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwYmr4JQrVKcnwpfN0WUKbeW5uodruVsNnZGq0kez_JlE8H6Mgaa95RCyATHyO4HQ7HLg/exec"; 
 
     try {
         const ncdDetails = getNCDsDetailedRisk(); 
