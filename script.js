@@ -1008,33 +1008,37 @@ function generatePDF() {
     }
 }
 
-function submitDataToSheets(score, riskStatus, healthAreas) {
-    // Extract specific risk levels from the healthAreas array
-    const ncdRisks = {};
-    healthAreas.forEach(area => {
-        // This maps the 'area' titles from your script logic to keys for the sheet
-        if (area.title.includes("Heart")) ncdRisks.heart = area.level;
-        if (area.title.includes("Diabetes")) ncdRisks.diabetes = area.level;
-        if (area.title.includes("Respiratory")) ncdRisks.respiratory = area.level;
-        if (area.title.includes("Cancer")) ncdRisks.cancer = area.level;
-    });
+async function submitDataToSheets(score, riskStatus, healthAreas) {
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbydZG-1D7_PSlrm50jvSk5SVT82LtuzOSaRoR70MSeN22KNvXy8RJmndF-90I7NtAPT0g/exec"; // Update with your deployment URL
 
-    const finalPayload = {
-        ...formData,
-        overallScore: score,
-        riskStatus: riskStatus,
-        bmi: calculateBMI().bmi,
-        ncdRisks: ncdRisks,
-        // Adding other assessment categories for better analytics
-        lifestyleScore: healthAreas.find(a => a.title.includes("Lifestyle"))?.level || "N/A",
-        mentalWellbeing: healthAreas.find(a => a.title.includes("Mental"))?.level || "N/A",
-        sleepQuality: healthAreas.find(a => a.title.includes("Sleep"))?.level || "N/A",
-        digitalWellness: healthAreas.find(a => a.title.includes("Digital"))?.level || "N/A"
-    };
+    try {
+        // Map the data for your analytics
+        const ncdRisks = getNCDsDetailedRisk(); // This function already exists in your script
+        
+        const finalPayload = {
+            ...formData, // Basic profile data
+            overallScore: score,
+            riskStatus: riskStatus,
+            bmi: calculateBMI().bmi,
+            // Individual Risk Levels for analytics
+            heartRisk: ncdRisks["CVD Risk (Heart)"].risk,
+            diabetesRisk: ncdRisks["Diabetes Risk"].risk,
+            metabolicRisk: ncdRisks["Obesity / Metabolic Syndrome"].risk,
+            lifestyleRisk: healthAreas["Lifestyle & Habits"],
+            mentalRisk: healthAreas["Mental & Emotional Wellbeing"],
+            sleepRisk: healthAreas["Sleep & Fatigue"]
+        };
 
-    fetch("https://script.google.com/macros/s/AKfycbydZG-1D7_PSlrm50jvSk5SVT82LtuzOSaRoR70MSeN22KNvXy8RJmndF-90I7NtAPT0g/exec", {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify(finalPayload)
-    });
+        await fetch(GOOGLE_SHEET_URL, {
+            method: "POST",
+            mode: "no-cors", 
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify(finalPayload)
+        });
+        
+        console.log("Data sent to Analytics Sheet successfully.");
+    } catch (error) {
+        // This prevents the error from stopping the PDF generation
+        console.error("Sheet Sync Failed, but PDF will continue:", error);
+    }
 }
