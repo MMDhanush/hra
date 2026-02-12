@@ -1009,38 +1009,38 @@ function generatePDF() {
 }
 
 async function submitDataToSheets(score, riskStatus, healthAreas) {
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwmPiY880LQFfRdVnFF3nMlLpXggC9PszGRegGxCvqAn0C2Yhq2dFl_TRiGJthj3xd0zQ/exec";
+    // PASTE YOUR NEWEST URL HERE
+    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxXFf_0ef2jinjN1ogHYL5M5jr-T7gWfsGJMZ2vO2GLRRdZtpb24ZwE_3pwuEzn7vPd1Q/exec"; 
 
     try {
-        // Get the specific NCD risks using your existing internal function
         const ncdDetails = getNCDsDetailedRisk(); 
         const bmiData = calculateBMI();
 
         const finalPayload = {
-            // Basic Profile from your formData object
             ...formData, 
             bmi: bmiData.bmi,
             overallScore: score,
             riskStatus: riskStatus,
-            
-            // Segregated NCD Risks
             heartRisk: ncdDetails["CVD Risk (Heart)"].risk,
             diabetesRisk: ncdDetails["Diabetes Risk"].risk,
             metabolicRisk: ncdDetails["Obesity / Metabolic Syndrome"].risk,
-            
-            // Segregated Lifestyle/Mental Risks from healthAreas
             lifestyleRisk: healthAreas.find(a => a.title.includes("Lifestyle"))?.level || "N/A",
             mentalRisk: healthAreas.find(a => a.title.includes("Mental"))?.level || "N/A",
             sleepRisk: healthAreas.find(a => a.title.includes("Sleep"))?.level || "N/A"
         };
 
+        // This specific fetch configuration is the "Magic Fix" for Google Sheets
         await fetch(GOOGLE_SHEET_URL, {
             method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain" },
+            mode: "no-cors", // Tells browser not to worry about security headers
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8" // Bypasses Pre-flight
+            },
             body: JSON.stringify(finalPayload)
         });
+        
+        console.log("Data sent successfully!");
     } catch (error) {
-        console.error("Analytics Sync Error:", error);
+        console.error("Data could not be sent:", error);
     }
 }
